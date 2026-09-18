@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.0.1";
+  var VERSION = "1.0.2";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1728,7 +1728,10 @@ var UI_ZS = {
   }
   function renderPrompterFrame() {
     var el = qs("#prompter"), ps = prompterState, ch = D().chapters[ps.chId], total = ps.items.length, cur = ps.items[ps.idx];
-    var html = '<div class="ptop"><button id="pClose" aria-label="' + esc(t().promptClose) + '">✕</button><span>' + esc(ch.numFull + "　" + ch.title) + '</span><span class="ptimer" id="pTimer">00:00</span></div><div class="pdots">';
+    var PF_LABELS = ["A", "A+", "A++", "A+++"];
+    var pf = parseInt(state.user.pfont, 10); if (!(pf >= 0 && pf <= 3)) pf = 1;
+    el.className = "pf-" + pf;
+    var html = '<div class="ptop"><button id="pClose" aria-label="' + esc(t().promptClose) + '">✕</button><span>' + esc(ch.numFull + "　" + ch.title) + '</span><button id="pFont" aria-label="字級" title="字級">' + PF_LABELS[pf] + '</button><span class="ptimer" id="pTimer">00:00</span></div><div class="pdots">';
     ps.items.forEach(function (it, i) { html += '<i class="' + (i < ps.idx ? "done" : (i === ps.idx ? "now" : "")) + '"></i>'; });
     html += '</div><div class="pbody"><div class="ptitle">' + esc(cur.phase) + ' · ' + esc(cur.title) + ' · ' + (ps.idx + 1) + ' / ' + total + '</div>';
     html += '<div class="pq">' + cur.lines.map(function (l) { return '<div style="margin-bottom:.4em">' + esc(l) + '</div>'; }).join("") + '</div>';
@@ -1738,6 +1741,7 @@ var UI_ZS = {
     html += '<button id="pNext">' + (ps.idx === total - 1 ? esc(t().exitPrompter) : esc(t().next) + ' ›') + '</button></div>';
     el.innerHTML = html;
     qs("#pClose", el).addEventListener("click", exitPrompter);
+    qs("#pFont", el).addEventListener("click", function () { state.user.pfont = (pf + 1) % 4; saveUser(); renderPrompterFrame(); });
     qs("#pPrev", el).addEventListener("click", function () { if (ps.idx > 0) { ps.idx--; renderPrompterFrame(); } });
     qs("#pNext", el).addEventListener("click", function () { if (ps.idx === total - 1) { exitPrompter(); return; } ps.idx++; renderPrompterFrame(); });
     var dm = qs("#pDoneMust", el);
