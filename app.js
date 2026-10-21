@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.6";
+  var VERSION = "1.1.7";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1041,7 +1041,7 @@ var UI_ZS = {
     var built = null;
     function ensureBuilt() { if (!built) built = buildChapterReadAlongQueue(); return built; }
     speakToggle("ch:" + chId,
-      function () { return ensureBuilt().texts; },
+      function () { spkTalk = (state.lang === "zh"); return ensureBuilt().texts; }, // 繁體課文和小智回答同一個說話節奏
       ch.numFull + "　" + ch.title,
       function () { return ensureBuilt().els; }
     );
@@ -1070,12 +1070,32 @@ var UI_ZS = {
     });
     return out.join(en ? " " : "");
   }
+  // 朗讀小智回答：一個區塊（小標題、段落、條列、引言、表格列）一段，唸到哪一段就用顏色標出那一段（跟讀）
   function speakToggleForMsg(mi) {
     var m = chatSession.messages[mi];
     if (!m || m.role !== "ai" || m.pending) return;
     if (!m.id) m.id = newMsgId();
-    var plain = mdSpeakText(m.text);
-    speakToggle("msg:" + m.id, function () { spkTalk = true; return spkChunks(ttsPronounceFix(plain)); }, t().companionTitle);
+    var built = null;
+    function build() {
+      var texts = [], els = [];
+      var bubble = qs('.msg.ai[data-mi="' + mi + '"]'), body = bubble ? qs(".msg-body", bubble) : null;
+      if (body) {
+        if (body.classList.contains("clamped")) {   // 收合著就先展開，才看得到跟讀
+          body.classList.remove("clamped"); m.collapsed = false;
+          var cb = qs(".msg-collapse", bubble); if (cb && !cb.hidden) cb.textContent = t().msgCollapse;
+        }
+        qsa("h4,h5,h6,p,li,blockquote,tr", body).forEach(function (el) {
+          if (el.tagName === "P" && el.parentNode && el.parentNode.closest && el.parentNode.closest("li,blockquote")) return;
+          var raw = el.tagName === "TR" ? qsa("th,td", el).map(function (c) { return c.textContent.trim(); }).join("，") : el.textContent;
+          var sp = mdSpeakText(raw); if (!sp) return;
+          spkChunks(ttsPronounceFix(sp)).forEach(function (c) { texts.push(c); els.push(el); });
+        });
+      }
+      if (!texts.length) { texts = spkChunks(ttsPronounceFix(mdSpeakText(m.text))); els = []; }
+      return { texts: texts, els: els };
+    }
+    function ensure() { if (!built) built = build(); return built; }
+    speakToggle("msg:" + m.id, function () { spkTalk = true; return ensure().texts; }, t().companionTitle, function () { return ensure().els; });
   }
   function uiToast(msg) {
     try {
