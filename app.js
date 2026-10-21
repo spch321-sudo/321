@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.9";
+  var VERSION = "1.2.0";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1440,33 +1440,48 @@ var UI_ZS = {
     var zhW = ["日", "一", "二", "三", "四", "五", "六"][wd], enW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wd];
     return state.lang === "en" ? (enW + " " + (dt.getUTCMonth() + 1) + "/" + dt.getUTCDate()) : ((dt.getUTCMonth() + 1) + "/" + dt.getUTCDate() + L3("（週", "") + zhW + "）");
   }
-  function groupTodayId() { // 共同進度今天該讀的那一課（非上課日就是最近一堂）
-    var ids = chapterIds(), k = groupSession(tpeDayNum());
-    return k > 0 ? ids[Math.min(k, ids.length) - 1] : null;
+  // 晨讀進度的一堂＝晨讀321 的一課：本 App 分成上、下的課（第三課、第六課）在同一堂一起讀
+  function groupSessions() {
+    var out = [], last = null;
+    chapterIds().forEach(function (id) {
+      var n = id.replace(/[ab]$/, "");
+      if (n === last) out[out.length - 1].push(id); else { out.push([id]); last = n; }
+    });
+    return out;
+  }
+  function sessLabel(ids) {
+    var m = lessonMeta(ids[0]); if (!m) return "";
+    if (ids.length === 1) return m.no + "　" + m.title;
+    var m2 = lessonMeta(ids[ids.length - 1]);
+    return m.no.replace(/[上下]$/, "").replace(/ \(Part \d\)$/, "") + L3("（上、下）", " (Parts 1–2)") + "　" + m.title + " ／ " + (m2 ? m2.title : "");
+  }
+  function sessFirstTodo(ids) { for (var i = 0; i < ids.length; i++) if (!state.user.completedChapters[ids[i]]) return ids[i]; return ids[0]; }
+  function sessDone(ids) { return ids.every(function (id) { return !!state.user.completedChapters[id]; }); }
+  function groupTodayId() { // 晨讀進度今天該讀的那一課（非上課日就是最近一堂）
+    var ss = groupSessions(), k = groupSession(tpeDayNum());
+    return k > 0 ? sessFirstTodo(ss[Math.min(k, ss.length) - 1]) : null;
   }
   function groupCard() {
-    var ids = chapterIds(), today = tpeDayNum(), k = groupSession(today), total = ids.length;
+    var ss = groupSessions(), today = tpeDayNum(), k = groupSession(today), total = ss.length;
     var html = '<div class="plan-sub">👥 ' + L3("晨讀進度", "Morning Devotion pace") + '</div>' +
       '<p class="muted" style="margin:0 0 8px">' + L3("照著國度321空中團契第七期的進度：10月19日開始，每週一、三、五各學一課。", "Following Kingdom 321 Online Fellowship's 7th cohort: from 19 October, one lesson every Monday, Wednesday and Friday.") + '</p>';
     if (k === 0) {
-      var m0 = lessonMeta(ids[0]);
       html += '<div class="pill">' + L3("第七期", "Cohort 7") + '　·　' + dayLabel(GROUP_PLAN.start) + L3(" 開始", " start") + '</div>';
-      if (m0) html += '<h3 style="margin:8px 0 4px">' + L3("第一堂：", "First session: ") + esc(m0.no) + '　' + esc(m0.title) + '</h3>';
+      html += '<h3 style="margin:8px 0 4px">' + L3("第一堂：", "First session: ") + esc(sessLabel(ss[0])) + '</h3>';
     } else if (k > total) {
       html += '<div class="pill">' + L3("第七期已全部學完 🎉", "Cohort 7 has finished all lessons 🎉") + '</div>';
     } else {
-      var tid = ids[k - 1], tm = lessonMeta(tid), done = state.user.completedChapters[tid], cls = isClassDay(today);
+      var sess = ss[k - 1], done = sessDone(sess), cls = isClassDay(today);
       html += '<div class="pill">' + L3("第七期", "Cohort 7") + '　·　' + L3("第 ", "Session ") + k + L3(" 堂", "") + ' / ' + total + '</div>';
-      if (tm) html += '<h3 style="margin:8px 0 4px">' + (cls ? L3("今天：", "Today: ") : L3("最近一堂：", "Latest session: ")) + esc(tm.no) + '　' + esc(tm.title) + (done ? ' ✓' : '') + '</h3>';
-      html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + tid + '">' + (done ? L3('再讀一次', 'Read it again') : L3('開始這一課', 'Start this lesson')) + '</a>';
-      // 這一週的三堂
+      html += '<h3 style="margin:8px 0 4px">' + (cls ? L3("今天：", "Today: ") : L3("最近一堂：", "Latest session: ")) + esc(sessLabel(sess)) + (done ? ' ✓' : '') + '</h3>';
+      html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + sessFirstTodo(sess) + '">' + (done ? L3('再讀一次', 'Read it again') : L3('開始這一課', 'Start this lesson')) + '</a>';
       var mon = today - ((dowOf(today) + 6) % 7);
       html += '<div class="plan-week">';
       GROUP_PLAN.days.forEach(function (wd) {
         var d = mon + (wd - 1); if (d < GROUP_PLAN.start) return;
         var kk = groupSession(d); if (kk < 1 || kk > total) return;
-        var id = ids[kk - 1], m = lessonMeta(id); if (!m) return;
-        html += '<a class="plan-wk' + (d === today ? ' now' : '') + '" href="#/course/' + id + '"><span class="d">' + esc(dayLabel(d)) + '</span><span class="t">' + esc(m.no) + '　' + esc(m.title) + '</span><span class="c">' + (state.user.completedChapters[id] ? '✓' : '') + '</span></a>';
+        var se = ss[kk - 1];
+        html += '<a class="plan-wk' + (d === today ? ' now' : '') + '" href="#/course/' + sessFirstTodo(se) + '"><span class="d">' + esc(dayLabel(d)) + '</span><span class="t">' + esc(sessLabel(se)) + '</span><span class="c">' + (sessDone(se) ? '✓' : '') + '</span></a>';
       });
       html += '</div>';
       if (!cls && k < total) html += '<p class="muted" style="margin:6px 0 0;font-size:12.5px">' + L3("下一堂：", "Next session: ") + esc(dayLabel(groupDayOfSession(k + 1))) + '</p>';
