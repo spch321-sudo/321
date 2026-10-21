@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.3";
+  var VERSION = "1.1.4";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -161,7 +161,7 @@ var UI_ZS = {
   };
   function t() { return UI[state.lang]; }
   /* 寫死在程式裡的字串：L3(繁體, English)；简体由下面的字表自動轉 */
-  var T2S_A = "丟並亞來係個們備傳優儲兒內兩別刪則剛剝創劃動勝勵匯區參員唸問啟喚單嗎嚴圖執報場墮夠夾學實寫寶專尋對導層屬島帥師帶幫幾張強彌彎後從復愛慣應戰捨換搶撐擇據敗敵數斷於時暫曉書會東條業榮樂標樣機檔檢欄權歡歷殼氣決沒淺測準溫滿漢災為無爾牆猶獎獨現瑪環畫當疊發眾確礎禱種稱穌筆節範簡紀約紅純紙級細組結給統經綠綱網緊線編練總繼續羅義習聖聲職聽肅腦腫腳臟臨與興舉藍蘋處號螢術裝裡製複覆見視覺覽觀觸計訊討記設訴註詞試詩話該詳認語誠誤說誰課調談請論謙講證譜讀變讓貝負貨賀資賽跡踐車軌軟較載輪輯輸轉這連週進過達遞遠適遲選邁還邊釋錄錯鍵鐘鑿長門閉開間閱關陸階隨雙雜離難雲靈靜響頁項順預頓領題顏願類顯餘馬驕驟髒體麵麼點齊圍", T2S_B = "丢并亚来系个们备传优储儿内两别删则刚剥创划动胜励汇区参员念问启唤单吗严图执报场堕够夹学实写宝专寻对导层属岛帅师带帮几张强弥弯后从复爱惯应战舍换抢撑择据败敌数断于时暂晓书会东条业荣乐标样机档检栏权欢历壳气决没浅测准温满汉灾为无尔墙犹奖独现玛环画当叠发众确础祷种称稣笔节范简纪约红纯纸级细组结给统经绿纲网紧线编练总继续罗义习圣声职听肃脑肿脚脏临与兴举蓝苹处号萤术装里制复复见视觉览观触计讯讨记设诉注词试诗话该详认语诚误说谁课调谈请论谦讲证谱读变让贝负货贺资赛迹践车轨软较载轮辑输转这连周进过达递远适迟选迈还边释录错键钟凿长门闭开间阅关陆阶随双杂离难云灵静响页项顺预顿领题颜愿类显余马骄骤脏体面么点齐围", T2S_M = null;
+  var T2S_A = "丟並亞來係個們備傳優儲兒內兩別刪則剛剝創劃動勝勵匯區參員唸問啟喚單嗎嚴圖執報場墮夠夾學實寫寶專尋對導層屬島帥師帶幫幾張強彌彎後從復愛慣應戰捨換搶撐擇據敗敵數斷於時暫曉書會東條業榮樂標樣機檔檢欄權歡歷殼氣決沒淺測準溫滿漢災為無爾牆猶獎獨現瑪環畫當疊發眾確礎禱種稱穌筆節範簡紀約紅純紙級細組結給統經綠綱網緊線編練總繼續羅義習聖聲職聽肅腦腫腳臟臨與興舉藍蘋處號螢術裝裡製複覆見視覺覽觀觸計訊討記設訴註詞試詩話該詳認語誠誤說誰課調談請論謙講證譜讀變讓貝負貨賀資賽跡踐車軌軟較載輪輯輸轉這連週進過達遞遠適遲選邁還邊釋錄錯鍵鐘鑿長門閉開間閱關陸階隨雙雜離難雲靈靜響頁項順預頓領題顏願類顯餘馬驕驟髒體麵麼點齊圍國團著", T2S_B = "丢并亚来系个们备传优储儿内两别删则刚剥创划动胜励汇区参员念问启唤单吗严图执报场堕够夹学实写宝专寻对导层属岛帅师带帮几张强弥弯后从复爱惯应战舍换抢撑择据败敌数断于时暂晓书会东条业荣乐标样机档检栏权欢历壳气决没浅测准温满汉灾为无尔墙犹奖独现玛环画当叠发众确础祷种称稣笔节范简纪约红纯纸级细组结给统经绿纲网紧线编练总继续罗义习圣声职听肃脑肿脚脏临与兴举蓝苹处号萤术装里制复复见视觉览观触计讯讨记设诉注词试诗话该详认语诚误说谁课调谈请论谦讲证谱读变让贝负货贺资赛迹践车轨软较载轮辑输转这连周进过达递远适迟选迈还边释录错键钟凿长门闭开间阅关陆阶随双杂离难云灵静响页项顺预顿领题颜愿类显余马骄骤脏体面么点齐围国团着", T2S_M = null;
   function toZs(x) {
     if (!T2S_M) { T2S_M = {}; for (var i = 0; i < T2S_A.length; i++) T2S_M[T2S_A.charAt(i)] = T2S_B.charAt(i); }
     return String(x).replace(/[\u3400-\u9fff]/g, function (c) { return T2S_M[c] || c; });
@@ -1374,12 +1374,61 @@ var UI_ZS = {
     var n = plan.type === "weekly" ? Math.floor(days / 7) : days;
     return ids[Math.min(Math.max(n, 0), ids.length - 1)];
   }
+  // 共同進度：國度321空中團契第七期，2026-10-19（週一）開始，每週一、三、五各學一課（以台北時間計）
+  var GROUP_PLAN = { start: Date.UTC(2026, 9, 19) / 86400000, days: [1, 3, 5] };
+  function tpeDayNum(ts) { return Math.floor(((ts || Date.now()) + 8 * 3600000) / 86400000); }
+  function dowOf(d) { return (d + 4) % 7; } // 1970-01-01 是週四
+  function isClassDay(d) { return GROUP_PLAN.days.indexOf(dowOf(d)) >= 0; }
+  function groupSession(d) { // d 當天（含）以前上過幾堂；d 若是上課日，就是今天這一堂的序號
+    var n = 0; for (var x = GROUP_PLAN.start; x <= d; x++) if (isClassDay(x)) n++; return n;
+  }
+  function groupDayOfSession(k) { var n = 0; for (var x = GROUP_PLAN.start; ; x++) if (isClassDay(x) && ++n === k) return x; }
+  function dayLabel(d) {
+    var dt = new Date(d * 86400000), wd = dowOf(d);
+    var zhW = ["日", "一", "二", "三", "四", "五", "六"][wd], enW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wd];
+    return state.lang === "en" ? (enW + " " + (dt.getUTCMonth() + 1) + "/" + dt.getUTCDate()) : ((dt.getUTCMonth() + 1) + "/" + dt.getUTCDate() + L3("（週", "") + zhW + "）");
+  }
+  function groupTodayId() { // 共同進度今天該讀的那一課（非上課日就是最近一堂）
+    var ids = chapterIds(), k = groupSession(tpeDayNum());
+    return k > 0 ? ids[Math.min(k, ids.length) - 1] : null;
+  }
+  function groupCard() {
+    var ids = chapterIds(), today = tpeDayNum(), k = groupSession(today), total = ids.length;
+    var html = '<div class="plan-sub">👥 ' + L3("共同進度", "Fellowship pace") + '</div>' +
+      '<p class="muted" style="margin:0 0 8px">' + L3("照著國度321空中團契第七期的進度：10月19日開始，每週一、三、五各學一課。", "Following Kingdom 321 Online Fellowship's 7th cohort: from 19 October, one lesson every Monday, Wednesday and Friday.") + '</p>';
+    if (k === 0) {
+      var m0 = lessonMeta(ids[0]);
+      html += '<div class="pill">' + L3("第七期", "Cohort 7") + '　·　' + dayLabel(GROUP_PLAN.start) + L3(" 開始", " start") + '</div>';
+      if (m0) html += '<h3 style="margin:8px 0 4px">' + L3("第一堂：", "First session: ") + esc(m0.no) + '　' + esc(m0.title) + '</h3>';
+    } else if (k > total) {
+      html += '<div class="pill">' + L3("第七期已全部學完 🎉", "Cohort 7 has finished all lessons 🎉") + '</div>';
+    } else {
+      var tid = ids[k - 1], tm = lessonMeta(tid), done = state.user.completedChapters[tid], cls = isClassDay(today);
+      html += '<div class="pill">' + L3("第七期", "Cohort 7") + '　·　' + L3("第 ", "Session ") + k + L3(" 堂", "") + ' / ' + total + '</div>';
+      if (tm) html += '<h3 style="margin:8px 0 4px">' + (cls ? L3("今天：", "Today: ") : L3("最近一堂：", "Latest session: ")) + esc(tm.no) + '　' + esc(tm.title) + (done ? ' ✓' : '') + '</h3>';
+      html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + tid + '">' + (done ? L3('再讀一次', 'Read it again') : L3('開始這一課', 'Start this lesson')) + '</a>';
+      // 這一週的三堂
+      var mon = today - ((dowOf(today) + 6) % 7);
+      html += '<div class="plan-week">';
+      GROUP_PLAN.days.forEach(function (wd) {
+        var d = mon + (wd - 1); if (d < GROUP_PLAN.start) return;
+        var kk = groupSession(d); if (kk < 1 || kk > total) return;
+        var id = ids[kk - 1], m = lessonMeta(id); if (!m) return;
+        html += '<a class="plan-wk' + (d === today ? ' now' : '') + '" href="#/course/' + id + '"><span class="d">' + esc(dayLabel(d)) + '</span><span class="t">' + esc(m.no) + '　' + esc(m.title) + '</span><span class="c">' + (state.user.completedChapters[id] ? '✓' : '') + '</span></a>';
+      });
+      html += '</div>';
+      if (!cls && k < total) html += '<p class="muted" style="margin:6px 0 0;font-size:12.5px">' + L3("下一堂：", "Next session: ") + esc(dayLabel(groupDayOfSession(k + 1))) + '</p>';
+    }
+    return html;
+  }
   function planCard(idx) {
     var p = state.user.plan, r = state.user.remind || { on: false, hour: 7 };
     var PLAN_TYPES = PLAN_TYPES_F();
     var html = '<div class="section-title">' + L3("讀經計畫", "Reading plan") + '</div><div class="card">';
+    html += groupCard();
+    html += '<div class="plan-sub" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">🧑 ' + L3("個人進度", "Personal pace") + '</div>';
     if (!p) {
-      html += '<p class="muted" style="margin:0 0 8px">' + L3("選一個節奏，「今日」會每天告訴你該讀哪一課。", "Choose a pace, and “Today” will tell you each day which lesson to read.") + '</p>';
+      html += '<p class="muted" style="margin:0 0 8px">' + L3("想照自己的節奏讀？選一個，「今日」會每天告訴你該讀哪一課。", "Prefer your own pace? Choose one, and “Today” will tell you each day which lesson to read.") + '</p>';
       PLAN_TYPES.forEach(function (pt) { html += '<button class="btn block" data-plan="' + pt[0] + '" style="margin-bottom:6px;justify-content:space-between"><span>' + pt[1] + '</span><span class="muted" style="font-size:12px">' + pt[2] + '</span></button>'; });
     } else {
       var pt = PLAN_TYPES.filter(function (x) { return x[0] === p.type; })[0] || PLAN_TYPES[0];
@@ -1388,9 +1437,9 @@ var UI_ZS = {
       html += '<div class="pill">' + esc(pt[1]) + '　·　' + L3("第 ", "Day ") + (Math.floor((Date.now() - p.start) / 86400000) + 1) + L3(" 天", "") + '</div>';
       if (tm) html += '<h3 style="margin:8px 0 4px">' + L3("今天：", "Today: ") + esc(tm.no) + '　' + esc(tm.title) + (done ? ' ✓' : '') + '</h3>';
       if (tid) html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + tid + '">' + (done ? L3('再讀一次', 'Read it again') : L3('開始今天這一課', "Start today's lesson")) + '</a>';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:13px"><span>' + L3("每天提醒 ", "Daily reminder ") + String(r.hour).padStart(2, "0") + ':00</span><div><button class="btn" id="remindToggle" style="padding:5px 10px;font-size:12px">' + (r.on ? L3('關閉提醒', 'Turn off') : L3('開啟提醒', 'Turn on')) + '</button> <button class="btn" id="remindHour" style="padding:5px 10px;font-size:12px">' + L3("改時間", "Change time") + '</button></div></div>';
-      html += '<button class="btn" id="planReset" style="margin-top:8px;font-size:12px;padding:5px 10px">' + L3("重設計畫", "Reset plan") + '</button>';
+      html += '<button class="btn" id="planReset" style="margin-top:8px;font-size:12px;padding:5px 10px">' + L3("重設個人進度", "Reset personal plan") + '</button>';
     }
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--border);font-size:13px"><span>' + L3("每天提醒 ", "Daily reminder ") + String(r.hour).padStart(2, "0") + ':00</span><div><button class="btn" id="remindToggle" style="padding:5px 10px;font-size:12px">' + (r.on ? L3('關閉提醒', 'Turn off') : L3('開啟提醒', 'Turn on')) + '</button> <button class="btn" id="remindHour" style="padding:5px 10px;font-size:12px">' + L3("改時間", "Change time") + '</button></div></div>';
     html += '</div>';
     return html;
   }
@@ -1433,10 +1482,11 @@ var UI_ZS = {
   function checkReminder() {
     try {
       var r = state.user.remind, p = state.user.plan;
-      if (!r || !r.on || !p || !("Notification" in window) || Notification.permission !== "granted") return;
+      if (!r || !r.on || !("Notification" in window) || Notification.permission !== "granted") return;
+      if (!p && !isClassDay(tpeDayNum())) return;
       var now = new Date(), key = "ls321_reminded_" + now.toDateString();
       if (now.getHours() < r.hour || localStorage.getItem(key)) return;
-      var tid = planTodayId(p); if (!tid || state.user.completedChapters[tid]) return;
+      var tid = p ? planTodayId(p) : groupTodayId(); if (!tid || state.user.completedChapters[tid]) return;
       var m = lessonMeta(tid);
       localStorage.setItem(key, "1");
       var show = function () { try { new Notification(t().brand + L3(" · 今天這一課", " · Today's lesson"), { body: m.no + "　" + m.title, icon: "icon-192.png", tag: "ls321-daily" }); } catch (e) {} };
