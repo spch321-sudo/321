@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.4";
+  var VERSION = "1.1.5";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1394,7 +1394,7 @@ var UI_ZS = {
   }
   function groupCard() {
     var ids = chapterIds(), today = tpeDayNum(), k = groupSession(today), total = ids.length;
-    var html = '<div class="plan-sub">👥 ' + L3("共同進度", "Fellowship pace") + '</div>' +
+    var html = '<div class="plan-sub">👥 ' + L3("晨讀進度", "Morning Devotion pace") + '</div>' +
       '<p class="muted" style="margin:0 0 8px">' + L3("照著國度321空中團契第七期的進度：10月19日開始，每週一、三、五各學一課。", "Following Kingdom 321 Online Fellowship's 7th cohort: from 19 October, one lesson every Monday, Wednesday and Friday.") + '</p>';
     if (k === 0) {
       var m0 = lessonMeta(ids[0]);
@@ -2620,6 +2620,33 @@ var UI_ZS = {
   function init() {
     applyTheme(); applyFont(); ttsWarmUp();
     on(qs("#langswitch"), "click", "button", function (e, btn) { switchLang(btn.getAttribute("data-lang")); });
+    // 字級：頂端語言切換旁的「A±」，點開選標準／大／特大／超大（和「我的」頁的字級設定同一個）
+    var fb = qs("#fontBtn");
+    if (fb) {
+      fb.setAttribute("aria-label", t().meFontSize || "Font size");
+      fb.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var old = qs(".fontpop"); if (old) { old.remove(); return; }
+        var labels = [t().fontStandard, t().fontLarge, t().fontXLarge, t().fontXXLarge];
+        var pop = document.createElement("div"); pop.className = "fontpop";
+        pop.innerHTML = '<div class="fp-t">' + esc(t().meFontSize) + '</div>' + labels.map(function (l, i) {
+          return '<button type="button" data-f="' + i + '" class="' + (i === state.font ? "active" : "") + '" style="font-size:' + (14 + i * 2) + 'px"><span>' + esc(l) + '</span><span>' + (i === state.font ? "✓" : "") + '</span></button>';
+        }).join("");
+        document.body.appendChild(pop);
+        var r = fb.getBoundingClientRect();
+        pop.style.top = (r.bottom + 6) + "px";
+        pop.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+        qsa("button", pop).forEach(function (b) {
+          b.addEventListener("click", function () {
+            setFont(parseInt(b.getAttribute("data-f"), 10)); pop.remove();
+            var fs = qs("#fontswitch"); if (fs) qsa("button", fs).forEach(function (x) { x.classList.toggle("active", parseInt(x.getAttribute("data-font"), 10) === state.font); });
+          });
+        });
+        setTimeout(function () {
+          document.addEventListener("click", function cl(ev) { if (!pop.contains(ev.target)) { pop.remove(); document.removeEventListener("click", cl); } });
+        }, 0);
+      });
+    }
     qsa("#langswitch button").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-lang") === state.lang); });
     window.addEventListener("hashchange", render);
     loadIndex().then(function () {
@@ -2633,7 +2660,37 @@ var UI_ZS = {
       finishBoot();
       qs("#view").innerHTML = '<div class="empty">' + L3("載入內容失敗，請檢查網路連線後重新整理。", "Couldn't load the content. Please check your connection and reload.") + '<br><span style="font-size:11px;">' + esc(String(err)) + '</span></div>';
     });
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+    // 舊版本自動更新：每次開啟、回到前景、每 30 分鐘檢查一次；新版接手後自動重新載入（正在打字或開著面板時，等下次回到 App 再換）
+    if ("serviceWorker" in navigator) {
+      var hadCtrl = !!navigator.serviceWorker.controller, swReloaded = false, swPending = false;
+      var busy = function () {
+        var a = document.activeElement;
+        return !!(qs(".hlsheet-mask") || qs(".gxsmask.on, #gxuBox.on") || (a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT")) || state.sending);
+      };
+      var doReload = function () {
+        if (swReloaded) return;
+        if (busy()) { swPending = true; return; }
+        swReloaded = true;
+        try { sessionStorage.setItem("ls321_updated", "1"); } catch (e) {}
+        location.reload();
+      };
+      navigator.serviceWorker.addEventListener("controllerchange", function () { if (hadCtrl) doReload(); hadCtrl = true; });
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
+        var up = function () { try { reg.update().catch(function () {}); } catch (e) {} };
+        if (reg.waiting && navigator.serviceWorker.controller) reg.waiting.postMessage("SKIP_WAITING");
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing; if (!nw) return;
+          nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) nw.postMessage("SKIP_WAITING"); });
+        });
+        setInterval(up, 30 * 60000);
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) return;
+          if (swPending) { swPending = false; doReload(); return; }
+          up();
+        });
+      }).catch(function () {});
+    }
+    try { if (sessionStorage.getItem("ls321_updated")) { sessionStorage.removeItem("ls321_updated"); setTimeout(function () { uiToast(L3("已自動更新到最新版 v", "Updated to the latest version v") + VERSION); }, 1200); } } catch (e) {}
   }
   init();
 })();

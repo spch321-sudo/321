@@ -1,7 +1,7 @@
 // 落實321 — Service Worker
 // Versioned cache: bump VERSION whenever app shell or data content changes,
 // otherwise already-installed PWA users will keep seeing stale content.
-var VERSION = "v1.1.4-plan1021";
+var VERSION = "v1.1.5-upd1021";
 var SHELL_CACHE = "ls321-shell-" + VERSION;
 var DATA_CACHE = "ls321-data-" + VERSION;
 
@@ -73,7 +73,24 @@ self.addEventListener("fetch", function (event) {
     return;
   }
 
-  // cache-first for app shell
+  // 程式本體（網頁、app.js、sw 以外的 .js）一律先上網拿最新版，離線才用快取——舊版本自動更新的關鍵
+  var isCode = event.request.mode === "navigate" || (url.origin === location.origin && /\.(html|js|json)$/.test(url.pathname) && !/\/sw\.js$/.test(url.pathname));
+  if (isCode) {
+    event.respondWith(
+      fetch(event.request, { cache: "no-cache" }).then(function (resp) {
+        if (resp && resp.ok && url.origin === location.origin) {
+          var cp = resp.clone();
+          caches.open(SHELL_CACHE).then(function (cache) { cache.put(event.request, cp); });
+        }
+        return resp;
+      }).catch(function () {
+        return caches.match(event.request).then(function (c) { return c || (event.request.mode === "navigate" ? caches.match("./index.html") : undefined); });
+      })
+    );
+    return;
+  }
+
+  // cache-first for icons and other static files
   event.respondWith(
     caches.match(event.request).then(function (cached) {
       return cached || fetch(event.request).then(function (resp) {
@@ -87,6 +104,10 @@ self.addEventListener("fetch", function (event) {
       });
     })
   );
+});
+
+self.addEventListener("message", function (event) {
+  if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("notificationclick", function (event) {

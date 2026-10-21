@@ -90,6 +90,12 @@ header.topbar{
 header.topbar .brand{display:flex; align-items:center; gap:8px; font-family:"Noto Serif TC",serif; font-weight:900; color:var(--accent); font-size:16px;}
 header.topbar .brand img{width:26px;height:26px;border-radius:6px;}
 header.topbar .spacer{flex:1;}
+#fontBtn{margin-left:8px; width:34px; height:30px; border:1px solid var(--border-strong); border-radius:999px; background:var(--surface); color:var(--accent); font-family:"Noto Serif TC",serif; font-weight:900; font-size:15px; line-height:1; padding:0; cursor:pointer;}
+#fontBtn sup{font-size:9px; margin-left:1px;}
+.fontpop{position:fixed; z-index:450; background:var(--surface); border:1px solid var(--border-strong); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:6px; display:flex; flex-direction:column; min-width:130px;}
+.fontpop .fp-t{font-size:11.5px; color:var(--ink-faint); padding:4px 10px 6px;}
+.fontpop button{border:none; background:transparent; color:var(--ink); text-align:left; padding:9px 12px; border-radius:8px; font-family:inherit; cursor:pointer; display:flex; justify-content:space-between; gap:12px;}
+.fontpop button.active{background:var(--surface-alt); color:var(--accent); font-weight:800;}
 .langswitch{display:flex; border:1px solid var(--border-strong); border-radius:999px; overflow:hidden; font-size:11.5px;}
 .langswitch button{border:none;background:var(--surface);color:var(--ink-soft);padding:6px 10px;font-weight:600;}
 .langswitch button.active{background:var(--accent);color:#fff;}
@@ -512,6 +518,7 @@ else if(l==="zs"){q("bootText","落实321载入中…");q("bootDiagMsg","载入�
   <div class="langswitch" id="langswitch">
     <button data-lang="zh" class="active">繁</button><button data-lang="zs">简</button><button data-lang="en">EN</button>
   </div>
+  <button type="button" id="fontBtn" aria-label="字級">A<sup>±</sup></button>
 </header>
 
 <main id="view"></main>
