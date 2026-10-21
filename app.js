@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.0";
+  var VERSION = "1.1.3";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -161,7 +161,7 @@ var UI_ZS = {
   };
   function t() { return UI[state.lang]; }
   /* 寫死在程式裡的字串：L3(繁體, English)；简体由下面的字表自動轉 */
-  var T2S_A = "丟並亞來係個們備傳優儲兒內兩別刪則剛剝創劃動勝勵匯區參員唸問啟喚單嗎嚴圖執報場墮夠夾學實寫寶專尋對導層屬島帥師帶幫幾張強彌彎後從復愛慣應戰捨換搶撐擇據敗敵數斷於時暫曉書會東條業榮樂標樣機檔檢欄權歡歷殼氣決沒淺測準溫滿漢災為無爾牆猶獎獨現瑪環畫當疊發眾確礎禱種稱穌筆節範簡紀約紅純紙級細組結給統經綠綱網緊線編練總繼續羅義習聖聲職聽肅腦腫腳臟臨與興舉藍蘋處號螢術裝裡製複覆見視覺覽觀觸計訊討記設訴註詞試詩話該詳認語誠誤說誰課調談請論謙講證譜讀變讓貝負貨賀資賽跡踐車軌軟較載輪輯輸轉這連週進過達遞遠適遲選邁還邊釋錄錯鍵鐘鑿長門閉開間閱關陸階隨雙雜離難雲靈靜響頁項順預頓領題顏願類顯餘馬驕驟髒體麵麼點齊", T2S_B = "丢并亚来系个们备传优储儿内两别删则刚剥创划动胜励汇区参员念问启唤单吗严图执报场堕够夹学实写宝专寻对导层属岛帅师带帮几张强弥弯后从复爱惯应战舍换抢撑择据败敌数断于时暂晓书会东条业荣乐标样机档检栏权欢历壳气决没浅测准温满汉灾为无尔墙犹奖独现玛环画当叠发众确础祷种称稣笔节范简纪约红纯纸级细组结给统经绿纲网紧线编练总继续罗义习圣声职听肃脑肿脚脏临与兴举蓝苹处号萤术装里制复复见视觉览观触计讯讨记设诉注词试诗话该详认语诚误说谁课调谈请论谦讲证谱读变让贝负货贺资赛迹践车轨软较载轮辑输转这连周进过达递远适迟选迈还边释录错键钟凿长门闭开间阅关陆阶随双杂离难云灵静响页项顺预顿领题颜愿类显余马骄骤脏体面么点齐", T2S_M = null;
+  var T2S_A = "丟並亞來係個們備傳優儲兒內兩別刪則剛剝創劃動勝勵匯區參員唸問啟喚單嗎嚴圖執報場墮夠夾學實寫寶專尋對導層屬島帥師帶幫幾張強彌彎後從復愛慣應戰捨換搶撐擇據敗敵數斷於時暫曉書會東條業榮樂標樣機檔檢欄權歡歷殼氣決沒淺測準溫滿漢災為無爾牆猶獎獨現瑪環畫當疊發眾確礎禱種稱穌筆節範簡紀約紅純紙級細組結給統經綠綱網緊線編練總繼續羅義習聖聲職聽肅腦腫腳臟臨與興舉藍蘋處號螢術裝裡製複覆見視覺覽觀觸計訊討記設訴註詞試詩話該詳認語誠誤說誰課調談請論謙講證譜讀變讓貝負貨賀資賽跡踐車軌軟較載輪輯輸轉這連週進過達遞遠適遲選邁還邊釋錄錯鍵鐘鑿長門閉開間閱關陸階隨雙雜離難雲靈靜響頁項順預頓領題顏願類顯餘馬驕驟髒體麵麼點齊圍", T2S_B = "丢并亚来系个们备传优储儿内两别删则刚剥创划动胜励汇区参员念问启唤单吗严图执报场堕够夹学实写宝专寻对导层属岛帅师带帮几张强弥弯后从复爱惯应战舍换抢撑择据败敌数断于时暂晓书会东条业荣乐标样机档检栏权欢历壳气决没浅测准温满汉灾为无尔墙犹奖独现玛环画当叠发众确础祷种称稣笔节范简纪约红纯纸级细组结给统经绿纲网紧线编练总继续罗义习圣声职听肃脑肿脚脏临与兴举蓝苹处号萤术装里制复复见视觉览观触计讯讨记设诉注词试诗话该详认语诚误说谁课调谈请论谦讲证谱读变让贝负货贺资赛迹践车轨软较载轮辑输转这连周进过达递远适迟选迈还边释录错键钟凿长门闭开间阅关陆阶随双杂离难云灵静响页项顺预顿领题颜愿类显余马骄骤脏体面么点齐围", T2S_M = null;
   function toZs(x) {
     if (!T2S_M) { T2S_M = {}; for (var i = 0; i < T2S_A.length; i++) T2S_M[T2S_A.charAt(i)] = T2S_B.charAt(i); }
     return String(x).replace(/[\u3400-\u9fff]/g, function (c) { return T2S_M[c] || c; });
@@ -2296,6 +2296,35 @@ var UI_ZS = {
         (note ? ("我的領受是：「" + note + "」。") : "") +
         "請幫我更深地明白這句話對我的意思，也帶我把焦點對準耶穌。";
     }
+    // ── 畫線面板（與 321 系列 App 一致：選色、範圍、寫領受、問小智、做成美圖、取消畫線） ──
+    var HL_TINT = { gold: "var(--gold-soft)", green: "var(--hlbg-green)", blue: "var(--hlbg-blue)", pink: "var(--hlbg-pink)", purple: "var(--hlbg-purple)", maroon: "var(--hlbg-maroon)", brown: "var(--hlbg-brown)", charcoal: "var(--hlbg-charcoal)" };
+    function secSpans(sec) { return qsa('.reader .sent[data-sec="' + sec + '"]', view); }
+    function spanKey(s) { return { sec: s.getAttribute("data-sec"), pidx: +s.getAttribute("data-pidx"), idx: +s.getAttribute("data-idx") }; }
+    function spanHl(s) { var k = spanKey(s); return findHighlight(k.sec, k.pidx, k.idx); }
+    function addHl(s, color) {
+      if (spanHl(s)) return;
+      var k = spanKey(s);
+      var arr = state.user.highlights[chId] = state.user.highlights[chId] || [];
+      arr.push({ sec: k.sec, pidx: k.pidx, idx: k.idx, text: s.textContent.slice(0, 200), at: Date.now(), lang: state.lang, chId: chId, chTitle: ch.title, color: color || "gold" });
+      s.setAttribute("data-hl", "1"); s.setAttribute("data-color", color || "gold");
+    }
+    function delHl(s) {
+      var k = spanKey(s);
+      var arr = state.user.highlights[chId] || [];
+      var i = arr.findIndex(function (h) { return h.sec === k.sec && h.pidx === k.pidx && h.idx === k.idx; });
+      if (i >= 0) arr.splice(i, 1);
+      s.removeAttribute("data-hl"); s.removeAttribute("data-color");
+      var noteEl = s.parentNode && s.parentNode.parentNode ? s.parentNode.parentNode.querySelector('.hl-note[data-note-key="' + hlNoteKey(k.sec, k.pidx, k.idx) + '"]') : null;
+      if (noteEl) noteEl.remove();
+    }
+    // 目前這一條畫線：點到的那一句，連同前後相連、已畫線的句子
+    function runOf(span) {
+      var all = secSpans(span.getAttribute("data-sec")), i = all.indexOf(span), a = i, b = i;
+      while (a > 0 && all[a - 1].hasAttribute("data-hl")) a--;
+      while (b < all.length - 1 && all[b + 1].hasAttribute("data-hl")) b++;
+      return { all: all, a: a, b: b, i: i, list: all.slice(a, b + 1) };
+    }
+    function runText(r) { return r.list.map(function (s) { return s.textContent; }).join("").replace(/\s+/g, " ").trim(); }
     function closeHlSheet() {
       var m = qs(".hlsheet-mask");
       if (m) m.remove();
@@ -2304,85 +2333,96 @@ var UI_ZS = {
       var h = findHighlight(sec, pidx, idx);
       if (!h || !span) return;
       closeHlSheet();
-      var sentence = span.textContent.slice(0, 200);
       var p = span.parentNode;
       var curColor = h.color || "gold";
       var colorNames = HL_COLOR_NAMES[state.lang] || HL_COLOR_NAMES.zh;
-      var colorsHtml = '<div class="hlsheet-colorrow">' +
-        '<span class="hlsheet-colorlabel">' + esc(t().hlColorLabel) + '</span>' +
-        '<div class="hlsheet-colors">' + HL_COLORS.map(function (c) {
-          return '<button type="button" class="hlswatch' + (c.id === curColor ? " active" : "") + '" data-color="' + c.id + '" style="background:' + c.dot + '" aria-label="' + esc(colorNames[c.id] || c.id) + '"></button>';
-        }).join("") + '</div></div>';
       var mask = document.createElement("div");
       mask.className = "hlsheet-mask";
-      mask.innerHTML = '<div class="hlsheet-card">' +
+      mask.innerHTML = '<div class="hlsheet-card"><div class="hlsheet-grip"></div>' +
         '<div class="hlsheet-title">' + esc(t().hlSheetTitle) + '</div>' +
-        '<div class="hlsheet-quote">' + esc(sentence) + '</div>' +
-        colorsHtml +
+        '<div class="hlsheet-quote"></div>' +
+        '<div class="hlsheet-colorrow"><span class="hlsheet-colorlabel">' + esc(t().hlColorLabel) + '</span><div class="hlsheet-colors">' +
+        HL_COLORS.map(function (c) {
+          return '<button type="button" class="hlswatch' + (c.id === curColor ? " active" : "") + '" data-color="' + c.id + '" style="background:' + HL_TINT[c.id] + '" aria-label="' + esc(colorNames[c.id] || c.id) + '"></button>';
+        }).join("") + '</div></div>' +
+        '<div class="hlsheet-rangerow"><span class="hlsheet-colorlabel">' + esc(L3("範圍", "Range")) + '</span>' +
+        '<button type="button" class="hlr" data-r="prev">' + esc(L3("↑前一句", "↑ Previous")) + '</button>' +
+        '<button type="button" class="hlr" data-r="minus" aria-label="-">−</button>' +
+        '<span class="hlr-n"></span>' +
+        '<button type="button" class="hlr" data-r="plus" aria-label="+">＋</button>' +
+        '<button type="button" class="hlr" data-r="para">' + esc(L3("整段", "Paragraph")) + '</button></div>' +
+        '<div class="hlsheet-rhint">' + esc(L3("按 ＋ 往下多畫一句、按「↑前一句」往上加一句，畫線就不只一句，可以連成一整段。「整段」是這一段的全部句子。", "Tap ＋ to add the next sentence, or “↑ Previous” to add the one before, so a highlight can run across several sentences. “Paragraph” highlights the whole paragraph.")) + '</div>' +
         '<textarea class="hlsheet-ta" placeholder="' + esc(t().hlReflectionPlaceholder) + '">' + esc(h.note || "") + '</textarea>' +
-        '<div class="hlsheet-acts">' +
-        '<button type="button" data-act="save" class="btn gold">' + esc(t().hlSaveReflection) + '</button>' +
-        '<button type="button" data-act="ask" class="btn primary">✨ ' + esc(t().hlAskXz) + '</button>' +
-        '</div>' +
-        '<div class="hlsheet-acts2">' +
-        '<button type="button" data-act="clearnote" class="btn">' + esc(t().hlClearNote) + '</button>' +
-        '<button type="button" data-act="remove" class="btn danger">' + esc(t().hlRemoveHighlight) + '</button>' +
-        '<button type="button" data-act="cancel" class="btn">' + esc(t().hlCancel) + '</button>' +
+        '<div class="hlsheet-acts4">' +
+        '<button type="button" data-act="save" class="btn primary">' + esc(L3("儲存", "Save")) + '</button>' +
+        '<button type="button" data-act="ask" class="btn">✨ ' + esc(t().hlAskXz) + '</button>' +
+        '<button type="button" data-act="card" class="btn">🖼 ' + esc(L3("做成美圖", "Make a card")) + '</button>' +
+        '<button type="button" data-act="remove" class="btn">' + esc(L3("取消畫線", "Remove highlight")) + '</button>' +
         '</div></div>';
       document.body.appendChild(mask);
       mask.addEventListener("click", function (e) { if (e.target === mask) closeHlSheet(); });
       var ta = mask.querySelector(".hlsheet-ta");
-      setTimeout(function () { ta.focus(); }, 60);
-      // color picker — applies immediately on tap (a categorization choice, not something that
-      // needs a separate "save" step), and updates the sentence's highlight + any of its notes
-      // on screen right away so the reader sees the new color without reopening the sheet.
+      function refresh() {
+        var r = runOf(span);
+        mask.querySelector(".hlsheet-quote").textContent = runText(r).slice(0, 600);
+        mask.querySelector(".hlr-n").textContent = state.lang === "en" ? (r.list.length + (r.list.length > 1 ? " sentences" : " sentence")) : (r.list.length + L3(" 句", ""));
+        mask.querySelector('[data-r="prev"]').disabled = r.a === 0;
+        mask.querySelector('[data-r="plus"]').disabled = r.b >= r.all.length - 1;
+        mask.querySelector('[data-r="minus"]').disabled = r.list.length < 2;
+        return r;
+      }
+      refresh();
+      Array.prototype.forEach.call(mask.querySelectorAll(".hlr"), function (btn) {
+        btn.addEventListener("click", function () {
+          var r = runOf(span), col = (spanHl(span) || {}).color || "gold", k = btn.getAttribute("data-r");
+          if (k === "prev" && r.a > 0) addHl(r.all[r.a - 1], col);
+          else if (k === "plus" && r.b < r.all.length - 1) addHl(r.all[r.b + 1], col);
+          else if (k === "minus" && r.list.length > 1) delHl(r.b > r.i ? r.all[r.b] : r.all[r.a]);
+          else if (k === "para") qsa(".sent", span.parentNode).forEach(function (s) { addHl(s, col); });
+          saveUser(); refresh();
+        });
+      });
+      // 選色：整條畫線一起換色，立刻生效
       Array.prototype.forEach.call(mask.querySelectorAll(".hlswatch"), function (btn) {
         btn.addEventListener("click", function () {
           var color = btn.getAttribute("data-color");
-          var hh = findHighlight(sec, pidx, idx);
-          if (hh) { hh.color = color; saveUser(); }
-          span.setAttribute("data-color", color);
-          var key = hlNoteKey(sec, pidx, idx);
-          var noteEl = p.parentNode.querySelector('.hl-note[data-note-key="' + key + '"]');
-          if (noteEl) noteEl.setAttribute("data-color", color);
-          Array.prototype.forEach.call(mask.querySelectorAll(".hlswatch"), function (b) {
-            b.classList.toggle("active", b === btn);
+          runOf(span).list.forEach(function (s) {
+            var hh = spanHl(s); if (hh) hh.color = color;
+            s.setAttribute("data-color", color);
+            var k = spanKey(s), noteEl = s.parentNode.parentNode.querySelector('.hl-note[data-note-key="' + hlNoteKey(k.sec, k.pidx, k.idx) + '"]');
+            if (noteEl) noteEl.setAttribute("data-color", color);
           });
+          saveUser();
+          Array.prototype.forEach.call(mask.querySelectorAll(".hlswatch"), function (b) { b.classList.toggle("active", b === btn); });
         });
       });
-      mask.querySelector('[data-act="save"]').addEventListener("click", function () {
+      function keepNote() {
         var hh = findHighlight(sec, pidx, idx);
         if (hh) { hh.note = (ta.value || "").trim(); saveUser(); }
-        closeHlSheet();
-        renderHlNote(p, sec, pidx, idx);
+        return hh ? hh.note : "";
+      }
+      mask.querySelector('[data-act="save"]').addEventListener("click", function () {
+        keepNote(); closeHlSheet(); renderHlNote(p, sec, pidx, idx);
       });
       mask.querySelector('[data-act="ask"]').addEventListener("click", function () {
-        var note = (ta.value || "").trim();
-        var hh = findHighlight(sec, pidx, idx);
-        if (hh) { hh.note = note; saveUser(); } // keep whatever reflection was just typed, same as Save would
-        pendingAsk = buildAskXzQuestion(sentence, note);
+        var note = keepNote();
+        pendingAsk = buildAskXzQuestion(runText(runOf(span)).slice(0, 600), note);
         pendingAskAutoSend = true;
         closeHlSheet();
         navigate("#/companion/" + chId);
       });
-      mask.querySelector('[data-act="clearnote"]').addEventListener("click", function () {
-        var hh = findHighlight(sec, pidx, idx);
-        if (hh) { hh.note = ""; saveUser(); }
-        closeHlSheet();
-        renderHlNote(p, sec, pidx, idx);
+      mask.querySelector('[data-act="card"]').addEventListener("click", function () {
+        var note = keepNote(), text = runText(runOf(span));
+        closeHlSheet(); renderHlNote(p, sec, pidx, idx);
+        var ref = (state.lang === "en" ? "Living Out 321 · " : L3("落實321・", "")) + (ch.numFull || "");
+        try { window.GXU.open({ text: text, ref: ref, note: note, plain: true }); }
+        catch (e) { uiToast(L3("美圖工作室還在載入，請稍後再試", "The card studio is still loading — please try again")); }
       });
       mask.querySelector('[data-act="remove"]').addEventListener("click", function () {
-        var arr = state.user.highlights[chId] || [];
-        var i = arr.findIndex(function (hh) { return hh.sec === sec && hh.pidx === pidx && hh.idx === idx; });
-        if (i >= 0) arr.splice(i, 1);
+        runOf(span).list.forEach(delHl);
         saveUser();
-        span.removeAttribute("data-hl");
-        var key = hlNoteKey(sec, pidx, idx);
-        var noteEl = p.parentNode.querySelector('.hl-note[data-note-key="' + key + '"]');
-        if (noteEl) noteEl.remove();
         closeHlSheet();
       });
-      mask.querySelector('[data-act="cancel"]').addEventListener("click", closeHlSheet);
     }
     // split every highlightable paragraph into sentence spans (pidx = paragraph position
     // within its section, assigned here in document order — mirrors what the old regex-based
@@ -2437,7 +2477,8 @@ var UI_ZS = {
     var html = '<div class="card"><div class="section-title" style="margin-top:0">' + esc(t().meProgress) + '</div>';
     html += '<div style="font-size:26px;font-weight:800;color:var(--accent);">' + doneCount + ' <span style="font-size:14px;color:var(--ink-faint);font-weight:600;">/ ' + ids.length + '</span></div>';
     html += '<div style="height:8px;background:var(--surface-alt);border-radius:4px;margin-top:8px;overflow:hidden;"><div style="height:100%;background:var(--accent);width:' + Math.round(doneCount / ids.length * 100) + '%;"></div></div>';
-    html += '<div style="display:flex;gap:8px;margin-top:10px"><a class="btn" style="flex:1" href="#/tools/journey">🧭 ' + L3("旅程", "Journey") + '</a><a class="btn" style="flex:1" href="#/tools/920">🍇 920</a></div></div>';
+    html += '<div style="display:flex;gap:8px;margin-top:10px"><a class="btn" style="flex:1" href="#/tools/journey">🧭 ' + L3("旅程", "Journey") + '</a><a class="btn" style="flex:1" href="#/tools/920">🍇 920</a></div>' +
+      '<button type="button" class="btn" id="meWorks" style="width:100%;margin-top:8px">🖼 ' + L3("我的作品（美圖・語音・影片）", "My creations (cards, voice, video)") + '</button></div>';
 
     html += '<div class="section-title">' + esc(t().meDeclarations) + '</div><div class="card">';
     var decls = state.user.declarations.slice().reverse();
@@ -2477,6 +2518,7 @@ var UI_ZS = {
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + L3("資料備份", "Backup") + '</span><div style="display:flex;gap:6px"><button class="btn" id="exportData" style="padding:6px 10px;font-size:12.5px">' + L3("匯出", "Export") + '</button><button class="btn" id="importData" style="padding:6px 10px;font-size:12.5px">' + L3("匯入", "Import") + '</button><input type="file" id="importFile" accept="application/json" hidden></div></div>';
     html += '<p class="muted" style="margin:8px 0 0;font-size:11.5px">' + esc(t().brand) + ' v' + VERSION + L3(' · 資料只存在這台裝置，換手機前請先匯出備份。', ' · Your data stays on this device only. Export a backup before changing phones.') + '</p></div>';
     view.innerHTML = html;
+    var mw = qs("#meWorks", view); if (mw) mw.addEventListener("click", function () { try { window.GXU.works(); } catch (e) { uiToast(L3("美圖工作室還在載入，請稍後再試", "The card studio is still loading — please try again")); } });
     qsa("#themeswitch button", view).forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-theme") === state.user.theme); b.addEventListener("click", function () { state.user.theme = b.getAttribute("data-theme"); saveUser(); applyTheme(); renderMe(view); }); });
     qsa("#fontswitch button", view).forEach(function (b) { b.classList.toggle("active", parseInt(b.getAttribute("data-font"), 10) === state.font); b.addEventListener("click", function () { setFont(parseInt(b.getAttribute("data-font"), 10)); renderMe(view); }); });
     qsa("#voiceswitch button", view).forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-voice") === curVoiceId); b.addEventListener("click", function () { setTtsVoice(state.lang, b.getAttribute("data-voice")); renderMe(view); }); });
@@ -2521,6 +2563,7 @@ var UI_ZS = {
     }
     state.index = null; state.units = {}; state.d = { chapters: {}, companionQs: [] }; state.tracks = null;
     document.documentElement.setAttribute("data-lang", lang);
+    try { document.documentElement.setAttribute("lang", lang === "en" ? "en" : (lang === "zs" ? "zh-Hans" : "zh-Hant")); } catch (e) {}
     qsa("#langswitch button").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-lang") === lang); });
     loadIndex().then(render).catch(function () { render(); });
   }
