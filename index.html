@@ -2,6 +2,11 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
+<script>/* 三語：在其他程式載入前先定好頁面語言（美圖工作室、聚會卡都看它） */
+(function(){try{var l=localStorage.getItem("ls321_lang");var h=document.documentElement;
+if(l==="en"){h.setAttribute("lang","en");h.setAttribute("data-lang","en");document.title="Living Out 321";}
+else if(l==="zs"){h.setAttribute("lang","zh-Hans");h.setAttribute("data-lang","zs");}
+else{h.setAttribute("data-lang","zh");}}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>落實321</title>
 <meta name="description" content="《落實321》晨讀321全套一百七十三課陪讀App——讀、享、講、帶四模式、操練、宣告、920操練簿與AI陪讀">
@@ -209,9 +214,9 @@ html.fs-lg .toolcard h4{font-size:15.5px;}
 html.fs-lg .toolcard p{font-size:13.5px;}
 html.fs-lg .clitem{font-size:15.5px;}
 html.fs-lg .jrow .jt{font-size:13px;}
-html.fs-lg .msg{font-size:16.5px;}
-html.fs-lg .msg.ai h4,html.fs-lg .msg.ai h5,html.fs-lg .msg.ai h6{font-size:16px;}
-html.fs-lg .msg.ai blockquote{font-size:15.5px;}
+html.fs-lg .msg{font-size:18.5px;}
+html.fs-lg .msg.ai h4,html.fs-lg .msg.ai h5,html.fs-lg .msg.ai h6{font-size:18.5px;}
+html.fs-lg .msg.ai blockquote{font-size:18px;}
 html.fs-lg .chatinput textarea{font-size:16px;}
 html.fs-lg .qs-chip{font-size:14.5px;}
 html.fs-lg .empty{font-size:15.5px;}
@@ -231,9 +236,9 @@ html.fs-xl .toolcard h4{font-size:17.5px;}
 html.fs-xl .toolcard p{font-size:15.5px;}
 html.fs-xl .clitem{font-size:17.5px;}
 html.fs-xl .jrow .jt{font-size:15px;}
-html.fs-xl .msg{font-size:19px;}
-html.fs-xl .msg.ai h4,html.fs-xl .msg.ai h5,html.fs-xl .msg.ai h6{font-size:18px;}
-html.fs-xl .msg.ai blockquote{font-size:17.5px;}
+html.fs-xl .msg{font-size:21px;}
+html.fs-xl .msg.ai h4,html.fs-xl .msg.ai h5,html.fs-xl .msg.ai h6{font-size:21px;}
+html.fs-xl .msg.ai blockquote{font-size:20.5px;}
 html.fs-xl .chatinput textarea{font-size:18px;}
 html.fs-xl .qs-chip{font-size:16.5px;}
 html.fs-xl .empty{font-size:17.5px;}
@@ -253,9 +258,9 @@ html.fs-xxl .toolcard h4{font-size:19.5px;}
 html.fs-xxl .toolcard p{font-size:17.5px;}
 html.fs-xxl .clitem{font-size:19.5px;}
 html.fs-xxl .jrow .jt{font-size:17px;}
-html.fs-xxl .msg{font-size:21.5px;}
-html.fs-xxl .msg.ai h4,html.fs-xxl .msg.ai h5,html.fs-xxl .msg.ai h6{font-size:20px;}
-html.fs-xxl .msg.ai blockquote{font-size:19.5px;}
+html.fs-xxl .msg{font-size:23.5px;}
+html.fs-xxl .msg.ai h4,html.fs-xxl .msg.ai h5,html.fs-xxl .msg.ai h6{font-size:23.5px;}
+html.fs-xxl .msg.ai blockquote{font-size:23px;}
 html.fs-xxl .chatinput textarea{font-size:20px;}
 html.fs-xxl .qs-chip{font-size:18.5px;}
 html.fs-xxl .empty{font-size:19.5px;}
@@ -389,11 +394,29 @@ html[data-lang="en"] .mythcard .t::before{content:"Truth: ";}
 #prompter .pdots i.now{background:#7FA0DE;}
 
 /* ---------- companion (chat) ---------- */
+/* 小智：回答對象／長度／A 字級列＋追問鈕（2026-10-21，照 321 互動聖經） */
+.audbar{display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:6px 0 8px; border-bottom:1px solid var(--border);}
+.audbar .audsel{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink); border-radius:999px; padding:6px 10px; font-size:13.5px; font-family:inherit; cursor:pointer;}
+.audbar .alen{display:inline-flex; align-items:center; gap:3px; margin-left:auto;}
+.audbar .alen .lb{font-size:12.5px; color:var(--ink-faint); margin-right:2px;}
+.audbar .alen button{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:5px 8px; font-size:13px; font-family:inherit; cursor:pointer;}
+.audbar .alen button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.audbar .audfs{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink); border-radius:999px; min-width:34px; height:32px; font-family:"Noto Serif TC",serif; font-weight:700; font-size:15px; cursor:pointer;}
+.audlist{display:flex; flex-wrap:wrap; gap:6px; padding:8px 0 4px;}
+.audlist button{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink); border-radius:999px; padding:6px 11px; font-size:13.5px; font-family:inherit; cursor:pointer;}
+.audlist button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.audhint{font-size:12.5px; color:var(--ink-faint); padding:0 0 6px;}
+.fuwrap{display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 12px;}
+.fuwrap .fulb{font-size:12.5px; color:var(--ink-faint); width:100%;}
+.fuwrap .fuchip{border:1px solid var(--border-strong); background:var(--surface); color:var(--ink); border-radius:999px; padding:6px 11px; font-size:13.5px; font-family:inherit; cursor:pointer;}
+html.fs-lg .fuwrap .fuchip,html.fs-lg .audlist button{font-size:15px;}
+html.fs-xl .fuwrap .fuchip,html.fs-xl .audlist button{font-size:16.5px;}
+html.fs-xxl .fuwrap .fuchip,html.fs-xxl .audlist button{font-size:18px;}
 .chatwrap{display:flex; flex-direction:column; height:calc(100vh - 130px);}
 .chatlog{flex:1; overflow-y:auto; padding:4px 0 12px;}
-.msg{max-width:88%; padding:10px 14px; border-radius:14px; margin-bottom:10px; font-size:14.5px; line-height:1.7;}
+.msg{max-width:88%; padding:10px 14px; border-radius:14px; margin-bottom:10px; font-size:16px; line-height:1.75;}
 .msg.user{background:var(--accent); color:#fff; margin-left:auto; border-bottom-right-radius:4px; white-space:pre-wrap;}
-.msg.ai{background:var(--surface-alt); margin-right:auto; border-bottom-left-radius:4px; max-width:94%;}
+.msg.ai{background:var(--surface-alt); margin-right:auto; border-bottom-left-radius:4px; max-width:100%; width:100%; box-sizing:border-box;}
 .msg .tierline{display:block; font-size:11px; margin-top:6px; opacity:.75;}
 .msg.ai .msg-body{position:relative;}
 .msg.ai .msg-body.clamped{max-height:190px; overflow:hidden;}
@@ -405,12 +428,12 @@ html[data-lang="en"] .mythcard .t::before{content:"Truth: ";}
 /* Markdown rendering inside an AI reply bubble — kept compact/simple for a chat context */
 .msg.ai p{margin:0 0 8px;}
 .msg.ai p:last-child{margin-bottom:0;}
-.msg.ai h4,.msg.ai h5,.msg.ai h6{margin:10px 0 4px; font-size:14.5px; font-weight:700; color:var(--accent-ink); line-height:1.4;}
+.msg.ai h4,.msg.ai h5,.msg.ai h6{margin:10px 0 4px; font-size:16px; font-weight:700; color:var(--accent-ink); line-height:1.4;}
 .msg.ai h4:first-child,.msg.ai h5:first-child,.msg.ai h6:first-child{margin-top:0;}
 .msg.ai b{font-weight:700;}
 .msg.ai i{font-style:italic;}
 .msg.ai code{background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
-.msg.ai blockquote{margin:8px 0; padding:6px 12px; border-left:3px solid var(--gold); background:var(--gold-soft); border-radius:0 8px 8px 0; font-size:14px; color:var(--ink-soft);}
+.msg.ai blockquote{margin:8px 0; padding:6px 12px; border-left:3px solid var(--gold); background:var(--gold-soft); border-radius:0 8px 8px 0; font-size:15.5px; color:var(--ink-soft);}
 .msg.ai ul{margin:4px 0 8px; padding-left:20px;}
 .msg.ai li{margin-bottom:4px;}
 .msg.ai hr{border:none; border-top:1px solid var(--border); margin:10px 0;}
@@ -463,12 +486,15 @@ html[data-lang="en"] .mythcard .t::before{content:"Truth: ";}
     <button id="boot-clear">清除快取並重新載入</button>
   </div>
 </div>
+<script>(function(){var l=document.documentElement.getAttribute("data-lang");function q(i,t){var e=document.getElementById(i);if(e)e.textContent=t;}
+if(l==="en"){q("bootText","Living Out 321 — loading…");q("bootDiagMsg","This is taking a while — it may be the network or the cache.");q("boot-reload","Reload");q("boot-clear","Clear cache and reload");}
+else if(l==="zs"){q("bootText","落实321载入中…");q("bootDiagMsg","载入时间较长，可能是网路或快取问题。");q("boot-reload","重新载入");q("boot-clear","清除快取并重新载入");}})();</script>
 
 <header class="topbar">
   <div class="brand"><img src="icon-72.png" alt=""><span id="brandName">落實321</span></div>
   <div class="spacer"></div>
   <div class="langswitch" id="langswitch">
-    <button data-lang="zh" class="active">繁</button><button data-lang="zs">简</button>
+    <button data-lang="zh" class="active">繁</button><button data-lang="zs">简</button><button data-lang="en">EN</button>
   </div>
 </header>
 
@@ -499,6 +525,7 @@ html[data-lang="en"] .mythcard .t::before{content:"Truth: ";}
 
 <div id="prompter" hidden></div>
 
+<script src="aud321.js"></script>
 <script src="app.js"></script>
 <script id="gxuScript">/* ===== GXU 美圖工作室（獨立版，v1.3.202610201200）：不依賴本 App 的內部結構，自帶狀態、我的作品與入口 ===== */
 (function () {

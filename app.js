@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.0.2";
+  var VERSION = "1.1.0";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -57,6 +57,7 @@
     speakerNotes: "講解重點", script: "口語逐字稿", loading: "載入中…",
     my2: "我的「2」", my2Hint: "每一個跟你有關係的人，都是你的「2」。寫下他們的名字，在他們面前操練無己「0」的生命，結出聖靈的「9」樣果子。", my2Add: "新增", my2Placeholder: "名字或稱呼",
     unitOverview: "單元總覽",
+    audFor: "對象：", lenLabel: "長度", fuLabel: "接著問：", reaskMsg: "用「{n}」重新回答…", contAsk: "請從剛才中斷的地方直接接著寫下去，不要重複已經寫過的內容，也不要加開場白。",
   };
 var UI_ZS = {
     brand: "落实321", tabToday: "今日", tabCourse: "课程", tabTools: "工具", tabCompanion: "陪读", tabMe: "我的",
@@ -100,11 +101,57 @@ var UI_ZS = {
     speakerNotes: "讲解重点", script: "口语逐字稿", loading: "载入中…",
     my2: "我的「2」", my2Hint: "每一个跟你有关系的人，都是你的「2」。写下他们的名字，在他们面前操练无己「0」的生命，结出圣灵的「9」样果子。", my2Add: "新增", my2Placeholder: "名字或称呼",
     unitOverview: "单元总览", heroSub: "晨读321 全套一百七十三课・读 享 讲 带", plan: "读经计划",
+    audFor: "对象：", lenLabel: "长度", fuLabel: "接着问：", reaskMsg: "用「{n}」重新回答…", contAsk: "请从刚才中断的地方直接接着写下去，不要重复已经写过的内容，也不要加开场白。",
   };
-  var UI = { zh: UI_ZH, zs: UI_ZS, en: UI_ZH };
+
+  var UI_EN = {
+    brand: "Living Out 321", tabToday: "Today", tabCourse: "Lessons", tabTools: "Tools", tabCompanion: "Companion", tabMe: "Me",
+    continueReading: "Continue reading", startPart: "Start a new unit", todayVerse: "Verse for today",
+    partLabel: "Unit", lessonLabel: "Lesson", allParts: "Ten units · 173 lessons",
+    readBtn: "Read this lesson", markDone: "Mark this lesson complete", doneLabel: "Completed", inProgress: "Reading", notStarted: "Not started",
+    tools: "Tools", toolJourney: "321 Journey Map", toolJourneyDesc: "The eight stages × ten units, at a glance",
+    toolTracks: "Keyword Tracks", toolTracksDesc: "Selflessness, humility, 920… across the whole series",
+    toolChecklist: "Teaching Integrity Check", toolChecklistDesc: "A self-check for speakers and small-group leaders",
+    toolPrompter: "Prompter / Lead a Group", toolPrompterDesc: "Full-screen slides + discussion + timer",
+    toolSpeaker: "Speaker's Toolkit", toolSpeakerDesc: "Export slide text in one tap; sermon timing",
+    tool920: "920 Practice Log", tool920Desc: "My \"2\" and my practice record",
+    companionTitle: "Xiaozhi · Living-It-Out Coach", companionIntro: "I'm here to help you live this lesson out: first back to the Bible, then back to the 321 vision, and finally one smallest step you can take today. Ask me anything about this lesson or the 321 vision.",
+    companionPlaceholder: "Type your question…", companionSend: "Send", companionNeedNet: "The companion needs an internet connection",
+    meHighlights: "My highlights", meDeclarations: "Declarations", meProgress: "Reading progress", meSettings: "Settings", mePractices: "Practice record",
+    meNoHighlights: "No highlights yet. Tap a sentence while reading to highlight it.",
+    meNoDeclarations: "No declarations yet. When you reach “Declarations of Faith”, tap a declaration or write your own.",
+    meNoPractices: "No practice record yet. Finish a lesson, tick one practice, and go and do it today.",
+    themeLight: "Light", themeDark: "Dark", themeAuto: "System",
+    writeDeclaration: "Write your own declaration", saveDecl: "Save declaration", declSaved: "Saved", declPick: "Tap a declaration to save it to your declarations",
+    startPrompterMsg: "Group-leading mode", phase: "Stage", question: "Question", closing: "Closing",
+    wakeLockOn: "Screen kept awake", exitPrompter: "End", promptClose: "Exit", prev: "Previous", next: "Next",
+    backHome: "Home", backToc: "Contents", readAloud: "Read aloud", pauseAloud: "Pause", resumeAloud: "Resume", stopAloud: "Stop", ttsUnsupported: "This device doesn't support read-aloud", ttsLoading: "Preparing audio…", fontSizeLabel: "Text size",
+    hlAddNote: "Add note", hlEditNote: "Edit note", hlAskXz: "Ask Xiaozhi", hlNotePlaceholder: "Write what you received, or a question…", hlSave: "Save", hlCancel: "Cancel", askAboutLine: "About this passage: “", askAboutLineEnd: "” —",
+    hlSheetTitle: "✍️ Write what you received", hlReflectionPlaceholder: "What has this sentence given you — a word, a stirring, a reminder from the Holy Spirit? Write it down and turn your focus to Jesus…", hlSaveReflection: "Save", hlClearNote: "Delete note", hlRemoveHighlight: "Remove highlight", hlColorLabel: "Highlight colour",
+    hlHint: "💡 When a sentence speaks to you, tap it to highlight it; tap it again to write what you received.",
+    tracksTitle: "Keyword Tracks", occurrences: "times", chaptersSpanned: "lessons",
+    checklistTitle: "Teaching Integrity Check", checklistPickChapter: "Choose a lesson to check", checklistDone: "Done",
+    journeyTitle: "321 Journey Map",
+    tier: { A: "A | Plain biblical teaching", B: "B | Theological inference open to discussion", C: "C | 321 applied language" },
+    companionQsToggle: "💡 Sample questions", companionQsHide: "Hide sample questions", companionQsHint: "Tap a question to ask Xiaozhi",
+    msgExpand: "Show all", msgCollapse: "Collapse", msgSave: "Save", msgSaved: "Saved", msgDelete: "Delete", msgDeleteConfirm: "Delete this reply?",
+    meFavorites: "Saved answers", meNoFavorites: "Nothing saved yet. Tap “Save” in a companion conversation to keep Xiaozhi's answer.",
+    meFontSize: "Text size", fontStandard: "Standard", fontLarge: "Large", fontXLarge: "Larger", fontXXLarge: "Largest",
+    meVoice: "Read-aloud voice",
+    modeRead: "Read", modeShare: "Share", modeTeach: "Teach", modeLead: "Lead",
+    modeReadDesc: "The full lesson", modeShareDesc: "Blog article · share in one tap", modeTeachDesc: "Slides + speaker notes + script", modeLeadDesc: "Lead full-screen: slides → discussion → practice",
+    keyVerse: "Key verse", practices: "Practices for this lesson", practiceHint: "Tick one you will do today; it goes into your practice log.", practiceFor: "Who are you practising for? (optional)", practiceSaved: "Added to your practice log",
+    declarations: "Declarations of Faith", prayer: "Prayer of Response", discussion: "Small-Group Discussion",
+    copyAll: "Copy all", copied: "Copied ✓", shareBtn: "Share", exportSlides: "Export slide text", slides12: "12 slides (15 min)", slides21: "21 slides (30 min)",
+    speakerNotes: "Speaker notes", script: "Spoken script", loading: "Loading…",
+    my2: "My \"2\"", my2Hint: "Everyone you have a relationship with is your \"2\". Write down their names, and before each of them practise the selfless \"0\" life, bearing the ninefold \"9\" fruit of the Spirit.", my2Add: "Add", my2Placeholder: "Name",
+    unitOverview: "Unit overview", heroSub: "The complete 173-lesson 321 Morning Devotion", plan: "Reading plan",
+    audFor: "For: ", lenLabel: "Length", fuLabel: "Ask next:", reaskMsg: "Answering again: {n}…", contAsk: "Please carry straight on from where you stopped. Don't repeat anything already written, and don't add an introduction.",
+  };
+  var UI = { zh: UI_ZH, zs: UI_ZS, en: UI_EN };
 
   var state = {
-    lang: (localStorage.getItem(LANG_KEY) === "zs" ? "zs" : "zh"),
+    lang: ({ zs: "zs", en: "en" })[localStorage.getItem(LANG_KEY)] || "zh",
     index: null,          // data.zh.index.json
     units: {},            // n -> unit pack (lessons map)
     d: { chapters: {}, companionQs: [] }, // D() view: merged chapters from all loaded units
@@ -113,6 +160,14 @@ var UI_ZS = {
     font: parseInt(localStorage.getItem(FONT_KEY), 10) || 0,
   };
   function t() { return UI[state.lang]; }
+  /* 寫死在程式裡的字串：L3(繁體, English)；简体由下面的字表自動轉 */
+  var T2S_A = "丟並亞來係個們備傳優儲兒內兩別刪則剛剝創劃動勝勵匯區參員唸問啟喚單嗎嚴圖執報場墮夠夾學實寫寶專尋對導層屬島帥師帶幫幾張強彌彎後從復愛慣應戰捨換搶撐擇據敗敵數斷於時暫曉書會東條業榮樂標樣機檔檢欄權歡歷殼氣決沒淺測準溫滿漢災為無爾牆猶獎獨現瑪環畫當疊發眾確礎禱種稱穌筆節範簡紀約紅純紙級細組結給統經綠綱網緊線編練總繼續羅義習聖聲職聽肅腦腫腳臟臨與興舉藍蘋處號螢術裝裡製複覆見視覺覽觀觸計訊討記設訴註詞試詩話該詳認語誠誤說誰課調談請論謙講證譜讀變讓貝負貨賀資賽跡踐車軌軟較載輪輯輸轉這連週進過達遞遠適遲選邁還邊釋錄錯鍵鐘鑿長門閉開間閱關陸階隨雙雜離難雲靈靜響頁項順預頓領題顏願類顯餘馬驕驟髒體麵麼點齊", T2S_B = "丢并亚来系个们备传优储儿内两别删则刚剥创划动胜励汇区参员念问启唤单吗严图执报场堕够夹学实写宝专寻对导层属岛帅师带帮几张强弥弯后从复爱惯应战舍换抢撑择据败敌数断于时暂晓书会东条业荣乐标样机档检栏权欢历壳气决没浅测准温满汉灾为无尔墙犹奖独现玛环画当叠发众确础祷种称稣笔节范简纪约红纯纸级细组结给统经绿纲网紧线编练总继续罗义习圣声职听肃脑肿脚脏临与兴举蓝苹处号萤术装里制复复见视觉览观触计讯讨记设诉注词试诗话该详认语诚误说谁课调谈请论谦讲证谱读变让贝负货贺资赛迹践车轨软较载轮辑输转这连周进过达递远适迟选迈还边释录错键钟凿长门闭开间阅关陆阶随双杂离难云灵静响页项顺预顿领题颜愿类显余马骄骤脏体面么点齐", T2S_M = null;
+  function toZs(x) {
+    if (!T2S_M) { T2S_M = {}; for (var i = 0; i < T2S_A.length; i++) T2S_M[T2S_A.charAt(i)] = T2S_B.charAt(i); }
+    return String(x).replace(/[\u3400-\u9fff]/g, function (c) { return T2S_M[c] || c; });
+  }
+  function L3(zh, en) { return state.lang === "en" ? en : (state.lang === "zs" ? toZs(zh) : zh); }
+  window.L3 = L3;
   try { document.documentElement.setAttribute("data-lang", state.lang); } catch (e) {}
 
   function applyFont() {
@@ -1024,6 +1079,8 @@ var UI_ZS = {
       remind: { on: false, hour: 7 },
       theme: "auto",
       ttsVoice: { zh: "yunjhe", zs: "yunfan", en: "andrew" },
+      aud: "adult",        // 小智回答對象（十種）
+      alen: "mid",         // 小智回答長度 brief｜mid｜full
     };
   }
   function loadUser() {
@@ -1091,7 +1148,7 @@ var UI_ZS = {
     return out;
   }
   function unitCn(n) { return "一二三四五六七八九十"[n - 1] || String(n); }
-  function unitLabel(u) { return "第" + unitCn(u.n) + "單元"; }
+  function unitLabel(u) { return state.lang === "en" ? "Unit " + u.n : L3("第" + unitCn(u.n) + "單元", ""); }
 
   // 範例問題：每單元二十題，依該單元課名自動組成（試用版；正式版由編輯逐題撰寫）
   function buildCompanionQs(idx) {
@@ -1122,7 +1179,7 @@ var UI_ZS = {
         qs = qs.slice(0, 14);
         general.forEach(function (g) { if (qs.length < 20) qs.push(g); });
       }
-      return { partNo: u.n, label: unitLabel(u) + "　" + u.title, qs: qs };
+      return { partNo: u.n, label: unitLabel(u) + (state.lang === "en" ? " · " : "　") + u.title, qs: qs };
     });
   }
 
@@ -1262,7 +1319,7 @@ var UI_ZS = {
     if (state.d.chapters[chId]) { fn(state.d.chapters[chId]); return; }
     view.innerHTML = '<div class="empty">' + esc(t().loading) + '</div>';
     loadUnit(u.n).then(function () { if (parseHash().join("/").indexOf(chId) >= 0) fn(state.d.chapters[chId]); })
-      .catch(function (e) { view.innerHTML = '<div class="empty">載入單元失敗，請檢查網路後重試。<br><span style="font-size:11px">' + esc(String(e)) + '</span></div>'; });
+      .catch(function (e) { view.innerHTML = '<div class="empty">' + L3("載入單元失敗，請檢查網路後重試。", "Couldn't load this unit. Please check your connection and try again.") + '<br><span style="font-size:11px">' + esc(String(e)) + '</span></div>'; });
   }
   function updateTabbar(root) {
     qsa("#tabbar a").forEach(function (a) { a.classList.toggle("active", a.getAttribute("data-tab") === root); });
@@ -1283,23 +1340,23 @@ var UI_ZS = {
     var nextId = lastId || ids[0];
     var meta = lessonMeta(nextId), u = unitOf(nextId);
     var doneCount = ids.filter(function (c) { return state.user.completedChapters[c]; }).length;
-    var html = '<div class="hero-badge"><img src="icon-192.png" alt="落實321"><div class="hb-title">' + esc(t().brand) + '</div><div class="hb-sub">' + esc(t().heroSub) + '</div></div>';
-    html += '<div class="card"><div class="pill">' + esc(unitLabel(u) + "　" + u.title) + '</div>';
+    var html = '<div class="hero-badge"><img src="icon-192.png" alt="' + esc(t().brand) + '"><div class="hb-title">' + esc(t().brand) + '</div><div class="hb-sub">' + esc(t().heroSub) + '</div></div>';
+    html += '<div class="card"><div class="pill">' + esc(unitLabel(u) + (state.lang === "en" ? " · " : "　") + u.title) + '</div>';
     html += "<h3 style='margin-top:8px'>" + esc(meta.no) + "　" + esc(meta.title) + "</h3>";
     if (meta.subtitle) html += '<p class="muted">' + esc(meta.subtitle) + '</p>';
-    html += '<p class="muted">' + doneCount + ' / ' + ids.length + ' 課已完成</p>';
+    html += '<p class="muted">' + doneCount + ' / ' + ids.length + L3(' 課已完成', ' lessons completed') + '</p>';
     html += '<a class="btn primary block" href="#/course/' + nextId + '">' + esc(lastId ? t().continueReading : t().readBtn) + '</a></div>';
     html += planCard(idx);
     html += spacedDeclCard();
     // 今日金句：依日期輪流取單元主題經文
     var day = Math.floor(Date.now() / 86400000) % idx.units.length;
     var du = idx.units[day];
-    html += '<div class="section-title">' + esc(t().todayVerse) + '</div><div class="declbox"><p class="decl">「' + esc(du.verse) + '」</p><p class="muted" style="margin:0">' + esc(du.vref) + '　·　' + esc(unitLabel(du) + " " + du.title) + '</p></div>';
+    html += '<div class="section-title">' + esc(t().todayVerse) + '</div><div class="declbox"><p class="decl">' + L3("「", "“") + esc(du.verse) + L3("」", "”") + '</p><p class="muted" style="margin:0">' + esc(du.vref) + '　·　' + esc(unitLabel(du) + " " + du.title) + '</p></div>';
     html += '<div class="section-title">' + esc(t().unitOverview) + '</div><div class="card" style="padding:8px 16px;">';
     idx.units.forEach(function (uu) {
       var chs = uu.lessons.map(function (l) { return l.id; });
       var done = chs.filter(function (c) { return state.user.completedChapters[c]; }).length;
-      html += '<a class="rowlink" href="#/course/' + chs[0] + '">' + ringSvg(done / chs.length) + '<div class="meta"><div class="t">' + esc(unitLabel(uu)) + '　' + esc(uu.title) + '</div><div class="s">第' + uu.start + '–' + uu.end + '課 · ' + done + '/' + chs.length + '</div></div><span class="chev">›</span></a>';
+      html += '<a class="rowlink" href="#/course/' + chs[0] + '">' + ringSvg(done / chs.length) + '<div class="meta"><div class="t">' + esc(unitLabel(uu)) + '　' + esc(uu.title) + '</div><div class="s">' + L3("第" + uu.start + "–" + uu.end + "課", "Lessons " + uu.start + "–" + uu.end) + ' · ' + done + '/' + chs.length + '</div></div><span class="chev">›</span></a>';
     });
     html += '</div>';
     html += '<div class="section-title">' + esc(t().tools) + '</div><div class="card"><a class="btn block" href="#/tools/journey">🧭 ' + esc(t().toolJourney) + '</a><a class="btn block" style="margin-top:8px" href="#/tools/920">🍇 ' + esc(t().tool920) + '</a></div>';
@@ -1308,7 +1365,7 @@ var UI_ZS = {
   }
 
   // 讀經計畫：每日一課（約半年）／每週一課（約三年半）／第八單元速成（看聽想講行 33 課）
-  var PLAN_TYPES = [["daily", "每日一課", "約半年走完 173 課"], ["weekly", "每週一課", "約三年半，配合小組"], ["unit8", "看聽想講行速成", "第八單元 33 課，每日一課"]];
+  function PLAN_TYPES_F() { return [["daily", L3("每日一課", "One lesson a day"), L3("約半年走完 173 課", "All 173 lessons in about six months")], ["weekly", L3("每週一課", "One lesson a week"), L3("約三年半，配合小組", "About three and a half years, with a small group")], ["unit8", L3("看聽想講行速成", "See-Listen-Think-Speak-Do fast track"), L3("第八單元 33 課，每日一課", "Unit 8's 33 lessons, one a day")]]; }
   function planTodayId(plan) {
     if (!plan) return null;
     var ids = chapterIds();
@@ -1319,19 +1376,20 @@ var UI_ZS = {
   }
   function planCard(idx) {
     var p = state.user.plan, r = state.user.remind || { on: false, hour: 7 };
-    var html = '<div class="section-title">讀經計畫</div><div class="card">';
+    var PLAN_TYPES = PLAN_TYPES_F();
+    var html = '<div class="section-title">' + L3("讀經計畫", "Reading plan") + '</div><div class="card">';
     if (!p) {
-      html += '<p class="muted" style="margin:0 0 8px">選一個節奏，「今日」會每天告訴你該讀哪一課。</p>';
+      html += '<p class="muted" style="margin:0 0 8px">' + L3("選一個節奏，「今日」會每天告訴你該讀哪一課。", "Choose a pace, and “Today” will tell you each day which lesson to read.") + '</p>';
       PLAN_TYPES.forEach(function (pt) { html += '<button class="btn block" data-plan="' + pt[0] + '" style="margin-bottom:6px;justify-content:space-between"><span>' + pt[1] + '</span><span class="muted" style="font-size:12px">' + pt[2] + '</span></button>'; });
     } else {
       var pt = PLAN_TYPES.filter(function (x) { return x[0] === p.type; })[0] || PLAN_TYPES[0];
       var tid = planTodayId(p), tm = tid ? lessonMeta(tid) : null;
       var done = tid && state.user.completedChapters[tid];
-      html += '<div class="pill">' + esc(pt[1]) + '　·　第 ' + (Math.floor((Date.now() - p.start) / 86400000) + 1) + ' 天</div>';
-      if (tm) html += '<h3 style="margin:8px 0 4px">今天：' + esc(tm.no) + '　' + esc(tm.title) + (done ? ' ✓' : '') + '</h3>';
-      if (tid) html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + tid + '">' + (done ? '再讀一次' : '開始今天這一課') + '</a>';
-      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:13px"><span>每天提醒 ' + String(r.hour).padStart(2, "0") + ':00</span><div><button class="btn" id="remindToggle" style="padding:5px 10px;font-size:12px">' + (r.on ? '關閉提醒' : '開啟提醒') + '</button> <button class="btn" id="remindHour" style="padding:5px 10px;font-size:12px">改時間</button></div></div>';
-      html += '<button class="btn" id="planReset" style="margin-top:8px;font-size:12px;padding:5px 10px">重設計畫</button>';
+      html += '<div class="pill">' + esc(pt[1]) + '　·　' + L3("第 ", "Day ") + (Math.floor((Date.now() - p.start) / 86400000) + 1) + L3(" 天", "") + '</div>';
+      if (tm) html += '<h3 style="margin:8px 0 4px">' + L3("今天：", "Today: ") + esc(tm.no) + '　' + esc(tm.title) + (done ? ' ✓' : '') + '</h3>';
+      if (tid) html += '<a class="btn ' + (done ? '' : 'primary') + ' block" href="#/course/' + tid + '">' + (done ? L3('再讀一次', 'Read it again') : L3('開始今天這一課', "Start today's lesson")) + '</a>';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:13px"><span>' + L3("每天提醒 ", "Daily reminder ") + String(r.hour).padStart(2, "0") + ':00</span><div><button class="btn" id="remindToggle" style="padding:5px 10px;font-size:12px">' + (r.on ? L3('關閉提醒', 'Turn off') : L3('開啟提醒', 'Turn on')) + '</button> <button class="btn" id="remindHour" style="padding:5px 10px;font-size:12px">' + L3("改時間", "Change time") + '</button></div></div>';
+      html += '<button class="btn" id="planReset" style="margin-top:8px;font-size:12px;padding:5px 10px">' + L3("重設計畫", "Reset plan") + '</button>';
     }
     html += '</div>';
     return html;
@@ -1344,10 +1402,10 @@ var UI_ZS = {
       if (d === 3 || d === 7 || d === 30) { var ch = state.d.chapters[c]; var m = lessonMeta(c); if (m) items.push({ id: c, meta: m, ch: ch, d: d }); }
     });
     if (!items.length) return "";
-    var html = '<div class="section-title">複習宣告</div>';
+    var html = '<div class="section-title">' + L3("複習宣告", "Declarations to revisit") + '</div>';
     items.slice(0, 3).forEach(function (it) {
       var decl = (it.ch && it.ch.declarations && it.ch.declarations[0]) || null;
-      html += '<div class="declbox"><p class="muted" style="margin:0 0 4px;font-size:12px">完成第 ' + it.d + ' 天 · ' + esc(it.meta.no) + '　' + esc(it.meta.title) + '</p>' + (decl ? '<p class="decl">' + esc(decl) + '</p>' : '<p class="decl">回到這一課，再讀一次信心宣告。</p>') + '<a class="btn" href="#/course/' + it.id + '" style="margin-top:6px">重溫這一課</a></div>';
+      html += '<div class="declbox"><p class="muted" style="margin:0 0 4px;font-size:12px">' + L3("完成第 " + it.d + " 天", "Day " + it.d + " after completing") + ' · ' + esc(it.meta.no) + '　' + esc(it.meta.title) + '</p>' + (decl ? '<p class="decl">' + esc(decl) + '</p>' : '<p class="decl">' + L3("回到這一課，再讀一次信心宣告。", "Go back to this lesson and read its declarations again.") + '</p>') + '<a class="btn" href="#/course/' + it.id + '" style="margin-top:6px">' + L3("重溫這一課", "Revisit this lesson") + '</a></div>';
     });
     return html;
   }
@@ -1357,14 +1415,14 @@ var UI_ZS = {
     if (rt) rt.addEventListener("click", function () {
       var r = state.user.remind = state.user.remind || { on: false, hour: 7 };
       if (!r.on) {
-        if (!("Notification" in window)) { uiToast("這台裝置不支援通知"); return; }
-        Notification.requestPermission().then(function (perm) { if (perm === "granted") { r.on = true; saveUser(); renderToday(view); scheduleReminderCheck(); } else uiToast("未取得通知權限"); });
+        if (!("Notification" in window)) { uiToast(L3("這台裝置不支援通知", "This device doesn't support notifications")); return; }
+        Notification.requestPermission().then(function (perm) { if (perm === "granted") { r.on = true; saveUser(); renderToday(view); scheduleReminderCheck(); } else uiToast(L3("未取得通知權限", "Notification permission not granted")); });
       } else { r.on = false; saveUser(); renderToday(view); }
     });
     var rh = qs("#remindHour", view);
-    if (rh) rh.addEventListener("click", function () { var v = parseInt(window.prompt("每天幾點提醒？（0–23）", String((state.user.remind || {}).hour || 7)), 10); if (v >= 0 && v <= 23) { state.user.remind.hour = v; saveUser(); renderToday(view); } });
+    if (rh) rh.addEventListener("click", function () { var v = parseInt(window.prompt(L3("每天幾點提醒？（0–23）", "Remind me each day at what hour? (0–23)"), String((state.user.remind || {}).hour || 7)), 10); if (v >= 0 && v <= 23) { state.user.remind.hour = v; saveUser(); renderToday(view); } });
     var pr = qs("#planReset", view);
-    if (pr) pr.addEventListener("click", function () { if (window.confirm("要重設讀經計畫嗎？進度紀錄不會清除。")) { state.user.plan = null; saveUser(); renderToday(view); } });
+    if (pr) pr.addEventListener("click", function () { if (window.confirm(L3("要重設讀經計畫嗎？進度紀錄不會清除。", "Reset your reading plan? Your progress record will be kept."))) { state.user.plan = null; saveUser(); renderToday(view); } });
   }
   // App 開著（或從背景回來）時，到了提醒時刻且今天這一課還沒完成，就發一則本機通知（PWA 不需伺服器）
   var reminderTimer = null;
@@ -1381,8 +1439,8 @@ var UI_ZS = {
       var tid = planTodayId(p); if (!tid || state.user.completedChapters[tid]) return;
       var m = lessonMeta(tid);
       localStorage.setItem(key, "1");
-      var show = function () { try { new Notification("落實321 · 今天這一課", { body: m.no + "　" + m.title, icon: "icon-192.png", tag: "ls321-daily" }); } catch (e) {} };
-      if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(function (reg) { reg.showNotification("落實321 · 今天這一課", { body: m.no + "　" + m.title, icon: "icon-192.png", tag: "ls321-daily" }).catch(show); }).catch(show); else show();
+      var show = function () { try { new Notification(t().brand + L3(" · 今天這一課", " · Today's lesson"), { body: m.no + "　" + m.title, icon: "icon-192.png", tag: "ls321-daily" }); } catch (e) {} };
+      if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(function (reg) { reg.showNotification(t().brand + L3(" · 今天這一課", " · Today's lesson"), { body: m.no + "　" + m.title, icon: "icon-192.png", tag: "ls321-daily" }).catch(show); }).catch(show); else show();
     } catch (e) {}
   }
 
@@ -1399,7 +1457,7 @@ var UI_ZS = {
       var done = chs.filter(function (c) { return state.user.completedChapters[c]; }).length;
       var open = hintUnit ? (hintUnit.n === u.n) : (u.n === 1);
       html += '<details class="part"' + (open ? " open" : "") + '><summary><span class="pn">' + esc(unitLabel(u)) + '</span><span class="pt">' + esc(u.title) + '</span><span class="muted">' + done + '/' + chs.length + '</span></summary><div class="plist">';
-      html += '<div class="muted" style="padding:4px 0 8px">「' + esc(u.verse) + '」（' + esc(u.vref) + '）</div>';
+      html += '<div class="muted" style="padding:4px 0 8px">' + L3("「", "“") + esc(u.verse) + L3("」（", "” (") + esc(u.vref) + L3("）", ")") + '</div>';
       u.lessons.forEach(function (l) {
         var st = chapterProgressState(l.id);
         html += '<a class="rowlink" href="#/course/' + l.id + '"><div class="meta"><div class="t">' + esc(l.no) + '　' + esc(l.title) + '</div><div class="s">' + (l.subtitle ? esc(l.subtitle) + ' · ' : '') + (st === "done" ? esc(t().doneLabel) : (st === "progress" ? esc(t().inProgress) : esc(t().notStarted))) + '</div></div><span class="chev">' + (st === "done" ? "✓" : (st === "progress" ? "•" : "")) + '</span></a>';
@@ -1417,6 +1475,7 @@ var UI_ZS = {
   }
   function modeBar(chId, mode) {
     var modes = [["read", t().modeRead, t().modeReadDesc], ["share", t().modeShare, t().modeShareDesc], ["teach", t().modeTeach, t().modeTeachDesc], ["lead", t().modeLead, t().modeLeadDesc]];
+    if (state.lang === "en") return '<div class="muted" style="font-size:12px;margin:8px 0">' + esc(t().modeReadDesc) + ' · The Share, Teach and Lead modes (blog, slides, prompter) are in the Chinese editions for now.</div>';
     var html = '<div class="langswitch modebar" style="display:flex;width:100%;margin:8px 0 4px">';
     modes.forEach(function (m) { html += '<a href="#/course/' + chId + '/' + m[0] + '" class="' + (mode === m[0] ? "active" : "") + '" style="flex:1;text-align:center;padding:8px 4px;font-weight:700;font-size:14px;text-decoration:none;color:' + (mode === m[0] ? '#fff' : 'var(--ink-soft)') + ';background:' + (mode === m[0] ? 'var(--accent)' : 'var(--surface)') + '">' + esc(m[1]) + '</a>'; });
     html += '</div>';
@@ -1449,6 +1508,7 @@ var UI_ZS = {
     saveUser();
     // 背景預抓下一單元
     var u = unitOf(chId); if (u && u.n < 10 && !state.units[u.n + 1]) setTimeout(function () { loadUnit(u.n + 1).catch(function () {}); }, 2500);
+    if (state.lang === "en") mode = "read";
     if (mode === "share") return renderShare(view, chId, ch);
     if (mode === "teach") return renderTeach(view, chId, ch, sub || "12");
     if (mode === "lead") return renderLead(view, chId, ch);
@@ -1488,7 +1548,7 @@ var UI_ZS = {
     // 討論
     if (ch.discussion && ch.discussion.length) {
       html += '<div class="card"><h3>💬 ' + esc(t().discussion) + '</h3>' + ch.discussion.map(function (q, i) { return '<p class="q" style="margin:0 0 8px">' + (i + 1) + '. ' + esc(q) + '</p>'; }).join("");
-      html += '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ ' + esc(t().toolPrompter) + '</a></div>';
+      html += (state.lang === "en" ? '' : '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ ' + esc(t().toolPrompter) + '</a>') + '</div>';
     }
     var isDone = !!state.user.completedChapters[chId];
     html += '<button class="btn ' + (isDone ? "" : "primary") + ' block" id="markDoneBtn">' + (isDone ? "✓ " + esc(t().doneLabel) : esc(t().markDone)) + '</button>';
@@ -1580,7 +1640,7 @@ var UI_ZS = {
 
   function renderLead(view, chId, ch) {
     var html = chapterHead(ch, chId, "lead");
-    html += '<div class="card"><p class="muted">' + esc(t().modeLeadDesc) + '。全螢幕深色介面、螢幕保持喚醒、分段計時。</p>';
+    html += '<div class="card"><p class="muted">' + esc(t().modeLeadDesc) + L3('。全螢幕深色介面、螢幕保持喚醒、分段計時。', '. Full-screen dark view, screen kept awake, timed stages.') + '</p>';
     html += '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ 12張版（約15分鐘）</a><a class="btn block" style="margin-top:8px" href="#/tools/prompter/' + chId + '/21">▶ 21張版（約30分鐘）</a></div>';
     html += '<div class="card"><h3>💬 ' + esc(t().discussion) + '</h3>' + (ch.discussion || []).map(function (q, i) { return '<p class="q" style="margin:0 0 8px">' + (i + 1) + '. ' + esc(q) + '</p>'; }).join("") + '</div>';
     html += '<div class="card"><h3>✅ ' + esc(t().practices) + '</h3><ol style="margin:0;padding-left:20px">' + (ch.practices || []).map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ol></div>';
@@ -1594,13 +1654,15 @@ var UI_ZS = {
   // ---------------------------------------------------------------
   function renderToolsList(view) {
     var html = '<h2 style="margin-top:4px">' + esc(t().tools) + '</h2><div class="toolgrid">';
-    [["journey", "🧭", t().toolJourney, t().toolJourneyDesc], ["920", "🍇", t().tool920, t().tool920Desc], ["tracks", "🔎", t().toolTracks, t().toolTracksDesc], ["checklist", "✅", t().toolChecklist, t().toolChecklistDesc], ["speaker", "🎤", t().toolSpeaker, t().toolSpeakerDesc]].forEach(function (it) {
+    [["journey", "🧭", t().toolJourney, t().toolJourneyDesc], ["920", "🍇", t().tool920, t().tool920Desc], ["tracks", "🔎", t().toolTracks, t().toolTracksDesc], ["checklist", "✅", t().toolChecklist, t().toolChecklistDesc], ["speaker", "🎤", t().toolSpeaker, t().toolSpeakerDesc]].filter(function (it) { return !(state.lang === "en" && it[0] === "speaker"); }).forEach(function (it) {
       html += '<a class="toolcard" href="#/tools/' + it[0] + '"><div class="ic">' + it[1] + '</div><h4>' + esc(it[2]) + '</h4><p>' + esc(it[3]) + '</p></a>';
     });
-    html += '</div><div class="section-title">' + esc(t().toolPrompter) + '</div><div class="card"><p class="muted">' + esc(t().toolPrompterDesc) + '。從任一課的「帶」模式進入，或先在「課程」選一課。</p><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a></div>';
+    html += '</div>' + (state.lang === "en" ? '' : '<div class="section-title">' + esc(t().toolPrompter) + '</div><div class="card"><p class="muted">' + esc(t().toolPrompterDesc) + L3('。從任一課的「帶」模式進入，或先在「課程」選一課。', '') + '</p><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a></div>');
     view.innerHTML = html;
   }
-  var JOURNEY_STEPS = [["資訊", "讀過本單元的課"], ["啟示", "讀過半數以上、有畫線"], ["信服", "存了宣告"], ["實踐", "勾了操練"], ["檢討", "做過教導誠信檢核"], ["修正", "同一課再次讀過"], ["反覆", "完成半數以上的課"], ["繁殖", "分享或匯出給別人"]];
+  var JOURNEY_STEPS_ZH = [["資訊", "讀過本單元的課"], ["啟示", "讀過半數以上、有畫線"], ["信服", "存了宣告"], ["實踐", "勾了操練"], ["檢討", "做過教導誠信檢核"], ["修正", "同一課再次讀過"], ["反覆", "完成半數以上的課"], ["繁殖", "分享或匯出給別人"]];
+  var JOURNEY_STEPS_EN = [["Information", "Read a lesson in this unit"], ["Revelation", "Read half or more, with highlights"], ["Conviction", "Saved a declaration"], ["Implementation", "Ticked a practice"], ["Evaluation", "Did the teaching integrity check"], ["Correction", "Reread a lesson"], ["Repetition", "Completed half or more of the lessons"], ["Multiplication", "Shared or exported to someone"]];
+  var JOURNEY_STEPS = JOURNEY_STEPS_ZH;
   function computeUnitStep(u) {
     var chs = u.lessons.map(function (l) { return l.id; });
     var opened = chs.filter(function (c) { return state.user.readChapters[c]; }).length;
@@ -1623,12 +1685,13 @@ var UI_ZS = {
     return step;
   }
   function renderJourney(view) {
-    var html = '<h2 style="margin-top:4px">' + esc(t().journeyTitle) + '</h2><p class="muted">改變觀念的八大步驟 × 十單元。依你的閱讀、畫線、宣告、操練、檢核、重讀、完成與分享自動推算。</p><div class="card">';
+    JOURNEY_STEPS = state.lang === "en" ? JOURNEY_STEPS_EN : JOURNEY_STEPS_ZH.map(function (x) { return [L3(x[0], ""), L3(x[1], "")]; });
+    var html = '<h2 style="margin-top:4px">' + esc(t().journeyTitle) + '</h2><p class="muted">' + L3("改變觀念的八大步驟 × 十單元。依你的閱讀、畫線、宣告、操練、檢核、重讀、完成與分享自動推算。", "The eight stages of changing our mindset × ten units, worked out from your reading, highlights, declarations, practices, checks, rereading, completions and sharing.") + '</p><div class="card">';
     state.index.units.forEach(function (u) {
       var reached = computeUnitStep(u);
       html += '<div class="jrow"><div class="jt">' + esc(unitLabel(u)) + '</div><div class="jdots">' + JOURNEY_STEPS.map(function (s, i) { return '<i class="' + (i < reached ? "on" : "") + '" title="' + esc(s[0]) + '"></i>'; }).join("") + '</div></div>';
     });
-    html += '</div><div class="section-title">八大步驟</div><div class="card">';
+    html += '</div><div class="section-title">' + L3("八大步驟", "The eight stages") + '</div><div class="card">';
     JOURNEY_STEPS.forEach(function (s, i) { html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);"><div style="font-family:\'Noto Serif TC\',serif;color:var(--gold);font-weight:700;width:22px;">' + (i + 1) + '</div><div><div style="font-weight:700;">' + esc(s[0]) + '</div><div class="muted">' + esc(s[1]) + '</div></div></div>'; });
     html += '</div>';
     view.innerHTML = html;
@@ -1659,6 +1722,21 @@ var UI_ZS = {
     { id: "c10", group: "建立屬神的體系", text: "是否鼓勵聽者找屬靈同伴（2）一起實踐？" },
     { id: "c11", group: "建立屬神的體系", text: "是否把這一課的信息傳給另一個人（繁殖）？" },
   ];
+  var CHECKLIST_EN = {
+    c1: ["Jesus is my role model", "Does this lesson point to Jesus' example rather than exalting people?"],
+    c2: ["Jesus is my role model", "Have I lived out what this lesson teaches before teaching it?"],
+    c3: ["The Bible is my standard", "Have the quoted verses been checked against the text, without taking them out of context?"],
+    c4: ["The Bible is my standard", "Are theological inferences honestly labelled by level (A / B / C)?"],
+    c5: ["The Holy Spirit is my guide", "Did I quietly seek the Holy Spirit's leading while preparing?"],
+    c6: ["The Holy Spirit is my guide", "Have I left room for the Holy Spirit to work in the listeners rather than persuading them myself?"],
+    c7: ["Let Jesus be King", "Is the aim that listeners obey Jesus, not me?"],
+    c8: ["Let Jesus receive all the glory", "Have I avoided drawing attention to my own eloquence, learning or experience?"],
+    c9: ["Establish God's system", "Is there a concrete practice that brings the truth home to family, workplace and church?"],
+    c10: ["Establish God's system", "Do I encourage listeners to find a spiritual companion (a \"2\") to practise with?"],
+    c11: ["Establish God's system", "Have I passed this lesson's message on to someone else (multiplication)?"],
+  };
+  function clText(it) { return state.lang === "en" ? CHECKLIST_EN[it.id][1] : L3(it.text, it.text); }
+  function clGroup(it) { return state.lang === "en" ? CHECKLIST_EN[it.id][0] : L3(it.group, it.group); }
   function renderChecklist(view, chId) {
     if (!chId) {
       var html = '<h2 style="margin-top:4px">' + esc(t().checklistTitle) + '</h2><p class="muted">' + esc(t().checklistPickChapter) + '</p><div class="card" style="padding:8px 16px;">';
@@ -1667,25 +1745,25 @@ var UI_ZS = {
         if (!doneN && !state.user.readChapters[cid]) return;
         html += '<a class="rowlink" href="#/tools/checklist/' + cid + '"><div class="meta"><div class="t">' + esc(m.no) + '　' + esc(m.title) + '</div><div class="s">' + doneN + '/' + CHECKLIST.length + '</div></div><span class="chev">›</span></a>';
       });
-      html += '</div><p class="muted">只列出你讀過或檢核過的課。</p>';
+      html += '</div><p class="muted">' + L3("只列出你讀過或檢核過的課。", "Only lessons you have read or checked are listed.") + '</p>';
       view.innerHTML = html; return;
     }
     var m2 = lessonMeta(chId); if (!m2) { view.innerHTML = '<div class="empty">404</div>'; return; }
     var cl = state.user.checklist[chId] = state.user.checklist[chId] || {};
     var html2 = '<h2 style="margin-top:4px">' + esc(t().checklistTitle) + '</h2><p class="muted">' + esc(m2.no) + '　' + esc(m2.title) + '</p><div class="card">';
-    var groups = {}; CHECKLIST.forEach(function (it) { (groups[it.group] = groups[it.group] || []).push(it); });
-    Object.keys(groups).forEach(function (g) { html2 += '<div class="clgroup">' + esc(g) + '</div>'; groups[g].forEach(function (it) { html2 += '<label class="clitem"><input type="checkbox" data-cl-id="' + it.id + '"' + (cl[it.id] ? " checked" : "") + '><span>' + esc(it.text) + '</span></label>'; }); });
-    html2 += '</div><a class="btn block" href="#/course/' + chId + '">‹ 回到本課</a>';
+    var groups = {}; CHECKLIST.forEach(function (it) { (groups[clGroup(it)] = groups[clGroup(it)] || []).push(it); });
+    Object.keys(groups).forEach(function (g) { html2 += '<div class="clgroup">' + esc(g) + '</div>'; groups[g].forEach(function (it) { html2 += '<label class="clitem"><input type="checkbox" data-cl-id="' + it.id + '"' + (cl[it.id] ? " checked" : "") + '><span>' + esc(clText(it)) + '</span></label>'; }); });
+    html2 += '</div><a class="btn block" href="#/course/' + chId + '">‹ ' + L3("回到本課", "Back to the lesson") + '</a>';
     view.innerHTML = html2;
     qsa("input[data-cl-id]", view).forEach(function (inp) { inp.addEventListener("change", function () { cl[inp.getAttribute("data-cl-id")] = inp.checked; saveUser(); }); });
   }
   function renderSpeaker(view, chId) {
-    var html = '<h2 style="margin-top:4px">' + esc(t().toolSpeaker) + '</h2><p class="muted">每一課都有 12 張與 21 張兩種投影片、講解重點與口語逐字稿（約15／30分鐘）。選一課進入「講」模式，可一鍵匯出投影片文字到簡報軟體。</p><div class="card" style="padding:8px 16px;">';
+    var html = '<h2 style="margin-top:4px">' + esc(t().toolSpeaker) + '</h2><p class="muted">' + L3("每一課都有 12 張與 21 張兩種投影片、講解重點與口語逐字稿（約15／30分鐘）。選一課進入「講」模式，可一鍵匯出投影片文字到簡報軟體。", "") + '</p><div class="card" style="padding:8px 16px;">';
     var hint = currentChapterHint();
     var ids = hint ? [hint] : [];
     chapterIds().forEach(function (c) { if (state.user.readChapters[c] && ids.indexOf(c) < 0) ids.push(c); });
     if (!ids.length) ids = chapterIds().slice(0, 5);
-    ids.slice(0, 12).forEach(function (c) { var m = lessonMeta(c); html += '<a class="rowlink" href="#/course/' + c + '/teach/12"><div class="meta"><div class="t">' + esc(m.no) + '　' + esc(m.title) + '</div><div class="s">約 ' + Math.round(m.chars / 250) + ' 分鐘完整講章 · 12／21張投影片</div></div><span class="chev">›</span></a>'; });
+    ids.slice(0, 12).forEach(function (c) { var m = lessonMeta(c); html += '<a class="rowlink" href="#/course/' + c + '/teach/12"><div class="meta"><div class="t">' + esc(m.no) + '　' + esc(m.title) + '</div><div class="s">' + L3("約 " + Math.round(m.chars / 250) + " 分鐘完整講章 · 12／21張投影片", "") + '</div></div><span class="chev">›</span></a>'; });
     html += '</div><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a>';
     view.innerHTML = html;
   }
@@ -1693,12 +1771,12 @@ var UI_ZS = {
     var html = '<h2 style="margin-top:4px">🍇 ' + esc(t().tool920) + '</h2><p class="muted">' + esc(t().my2Hint) + '</p>';
     html += '<div class="card"><h3>' + esc(t().my2) + '</h3><div id="my2list">' + state.user.my2.map(function (n, i) { return '<span class="pill" style="margin:0 6px 6px 0;font-size:13px">' + esc(n) + ' <button data-rm="' + i + '" style="border:none;background:transparent;color:var(--gold);cursor:pointer">✕</button></span>'; }).join("") + '</div>';
     html += '<div style="display:flex;gap:8px;margin-top:8px"><input id="my2in" placeholder="' + esc(t().my2Placeholder) + '" style="flex:1;border:1px solid var(--border-strong);border-radius:8px;padding:8px 10px;background:var(--surface);color:var(--ink);font-family:inherit"><button class="btn primary" id="my2add">' + esc(t().my2Add) + '</button></div></div>';
-    var fruits = ["仁愛", "喜樂", "和平", "忍耐", "恩慈", "良善", "信實", "溫柔", "節制"];
-    html += '<div class="card"><h3>' + esc(t().mePractices) + '　<span class="muted" style="font-weight:400">' + state.user.practiceLog.length + ' 次</span></h3>';
+    var fruits = state.lang === "en" ? ["love", "joy", "peace", "patience", "kindness", "goodness", "faithfulness", "gentleness", "self-control"] : ["仁愛", "喜樂", "和平", "忍耐", "恩慈", "良善", "信實", "溫柔", "節制"].map(function (x) { return L3(x, x); });
+    html += '<div class="card"><h3>' + esc(t().mePractices) + '　<span class="muted" style="font-weight:400">' + state.user.practiceLog.length + L3(' 次', ' times') + '</span></h3>';
     var log = state.user.practiceLog.slice().reverse();
     if (!log.length) html += '<div class="empty">' + esc(t().meNoPractices) + '</div>';
-    log.slice(0, 40).forEach(function (l) { html += '<div class="declitem"><div class="d">' + esc(l.text) + '</div><div class="m">' + esc(l.chTitle) + (l.person ? ' · 為 ' + esc(l.person) : '') + ' · ' + fmtDate(l.at) + '</div></div>'; });
-    html += '</div><div class="card"><h3>聖靈的九樣果子</h3><p class="muted">「聖靈所結的果子，就是仁愛、喜樂、和平、忍耐、恩慈、良善、信實、溫柔、節制。」（加拉太書五章22至23節）</p><div>' + fruits.map(function (f) { return '<span class="pill" style="margin:0 6px 6px 0">' + f + '</span>'; }).join("") + '</div></div>';
+    log.slice(0, 40).forEach(function (l) { html += '<div class="declitem"><div class="d">' + esc(l.text) + '</div><div class="m">' + esc(l.chTitle) + (l.person ? L3(' · 為 ', ' · for ') + esc(l.person) : '') + ' · ' + fmtDate(l.at) + '</div></div>'; });
+    html += '</div><div class="card"><h3>' + L3("聖靈的九樣果子", "The ninefold fruit of the Spirit") + '</h3><p class="muted">' + L3("「聖靈所結的果子，就是仁愛、喜樂、和平、忍耐、恩慈、良善、信實、溫柔、節制。」（加拉太書五章22至23節）", "“The fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faith, gentleness, and self-control.” (Galatians 5:22–23)") + '</p><div>' + fruits.map(function (f) { return '<span class="pill" style="margin:0 6px 6px 0">' + f + '</span>'; }).join("") + '</div></div>';
     view.innerHTML = html;
     qs("#my2add", view).addEventListener("click", function () { var v = (qs("#my2in", view).value || "").trim(); if (!v) return; state.user.my2.push(v); saveUser(); render920(view); });
     qsa("[data-rm]", view).forEach(function (b) { b.addEventListener("click", function () { state.user.my2.splice(parseInt(b.getAttribute("data-rm"), 10), 1); saveUser(); render920(view); }); });
@@ -1712,10 +1790,10 @@ var UI_ZS = {
   function launchPrompter(chId, len) {
     var ch = D().chapters[chId]; if (!ch) { navigate("#/course/" + chId); return; }
     var items = [];
-    (ch["brief" + (len || "12")] || []).forEach(function (s) { items.push({ type: "slide", phase: "投影片", title: s.n + "　" + s.title, lines: s.text || [], notes: s.notes || [] }); });
-    (ch.discussion || []).forEach(function (q, i) { items.push({ type: "q", phase: "小組討論", title: "第" + (i + 1) + "題", lines: [q], must: true, no: i + 1 }); });
-    if (ch.declarations && ch.declarations.length) items.push({ type: "decl", phase: "信心宣告", title: "一起宣告", lines: ch.declarations });
-    (ch.practices || []).forEach(function (p, i) { items.push({ type: "p", phase: "本週操練", title: "操練" + "一二三四五六"[i], lines: [p] }); });
+    (ch["brief" + (len || "12")] || []).forEach(function (s) { items.push({ type: "slide", phase: L3("投影片", "Slides"), title: s.n + "　" + s.title, lines: s.text || [], notes: s.notes || [] }); });
+    (ch.discussion || []).forEach(function (q, i) { items.push({ type: "q", phase: L3("小組討論", "Discussion"), title: L3("第" + (i + 1) + "題", "Question " + (i + 1)), lines: [q], must: true, no: i + 1 }); });
+    if (ch.declarations && ch.declarations.length) items.push({ type: "decl", phase: L3("信心宣告", "Declarations"), title: L3("一起宣告", "Declare together"), lines: ch.declarations });
+    (ch.practices || []).forEach(function (p, i) { items.push({ type: "p", phase: L3("本週操練", "This week's practice"), title: L3("操練" + "一二三四五六"[i], "Practice " + (i + 1)), lines: [p] }); });
     prompterState = { chId: chId, items: items, idx: 0, startTs: Date.now(), timerInt: null };
     var el = qs("#prompter"); el.hidden = false; requestWakeLock(); renderPrompterFrame(); document.body.style.overflow = "hidden";
   }
@@ -1735,7 +1813,7 @@ var UI_ZS = {
     ps.items.forEach(function (it, i) { html += '<i class="' + (i < ps.idx ? "done" : (i === ps.idx ? "now" : "")) + '"></i>'; });
     html += '</div><div class="pbody"><div class="ptitle">' + esc(cur.phase) + ' · ' + esc(cur.title) + ' · ' + (ps.idx + 1) + ' / ' + total + '</div>';
     html += '<div class="pq">' + cur.lines.map(function (l) { return '<div style="margin-bottom:.4em">' + esc(l) + '</div>'; }).join("") + '</div>';
-    if (cur.notes && cur.notes.length) html += '<details style="margin-top:14px;color:#C9B98A;font-size:14px"><summary style="cursor:pointer">講解重點</summary><ol style="padding-left:20px">' + cur.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ol></details>';
+    if (cur.notes && cur.notes.length) html += '<details style="margin-top:14px;color:#C9B98A;font-size:14px"><summary style="cursor:pointer">' + esc(t().speakerNotes) + '</summary><ol style="padding-left:20px">' + cur.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ol></details>';
     html += '</div><div class="pctl"><button id="pPrev"' + (ps.idx === 0 ? " disabled" : "") + '>‹ ' + esc(t().prev) + '</button>';
     if (cur.type === "q") html += '<button id="pDoneMust">' + (state.user.discussionDone[ps.chId] && state.user.discussionDone[ps.chId][cur.no] ? "✓ 已討論" : "○ 標記已討論") + '</button>';
     html += '<button id="pNext">' + (ps.idx === total - 1 ? esc(t().exitPrompter) : esc(t().next) + ' ›') + '</button></div>';
@@ -1757,6 +1835,50 @@ var UI_ZS = {
   // 陪讀：小智．落實教練
   // ---------------------------------------------------------------
   var chatSession = { messages: [] };
+  /* ── 321互動聖經：回答對象（十種）＋回答長度（2026-10-21 移植） ── */
+  function audData() { var A = window.AUD321; return A ? (A[state.lang] || A.zh) : null; }
+  function audKey() { var d = audData(); var k = state.user.aud; return (d && d.keys.indexOf(k) >= 0) ? k : "adult"; }
+  function alenKey() { var k = state.user.alen; return (k === "brief" || k === "full") ? k : "mid"; }
+  var audOpen = false;
+  function audExtra() {
+    var d = audData(); if (!d) return "";
+    var en = state.lang === "en", zs = state.lang === "zs";
+    var s = (en ? "\n\n[Audience]" : (zs ? "\n\n【回答对象】" : "\n\n【回答對象】")) + d.aud[audKey()].sys;
+    var L = alenKey();
+    if (L !== "mid") {
+      s += (en ? "\n\n[Length]" : (zs ? "\n\n【回答长度】" : "\n\n【回答長度】")) + d.len[L] +
+        (en ? " (This length request overrides the earlier 150–250-word guideline; still keep the answer format above.)"
+            : (zs ? "（这一条长度要求优先于上面「约150-250字」的原则；仍然照上面的格式排版。）"
+                  : "（這一條長度要求優先於上面「約150-250字」的原則；仍然照上面的格式排版。）"));
+    }
+    return s;
+  }
+  function audBar() {
+    var d = audData(); if (!d) return "";
+    var k = audKey(), L = alenKey(), T = t();
+    var h = '<div class="audbar">' +
+      '<button type="button" class="audsel" id="audToggle">' + d.icon[k] + " " + esc(T.audFor + d.names[k]) + (audOpen ? " ▴" : " ▾") + '</button>' +
+      '<span class="alen"><span class="lb">' + esc(T.lenLabel) + '</span>' +
+      ["brief", "mid", "full"].map(function (x) { return '<button type="button" data-alen="' + x + '"' + (L === x ? ' class="on"' : "") + '>' + esc(d.lenNames[x]) + '</button>'; }).join("") +
+      '</span><button type="button" class="audfs" id="audFs" title="' + esc(T.fontSizeLabel) + '" aria-label="' + esc(T.fontSizeLabel) + '">A</button></div>';
+    if (audOpen) {
+      h += '<div class="audlist">' + d.keys.map(function (x) {
+        return '<button type="button" data-aud="' + x + '"' + (x === k ? ' class="on"' : "") + '>' + d.icon[x] + " " + esc(d.names[x]) + '</button>';
+      }).join("") + '</div><div class="audhint">' + esc(d.hints[k]) + '</div>';
+    }
+    return h;
+  }
+  /* 換了長度：把最後一個問題用新長度重答一次（取代，不疊加） */
+  function reaskLast(chId) {
+    var ms = chatSession.messages; if (!ms.length) return false;
+    var last = ms[ms.length - 1]; if (last.role !== "ai" || last.pending) return false;
+    var ui = -1; for (var i = ms.length - 1; i >= 0; i--) if (ms[i].role === "user") { ui = i; break; }
+    if (ui < 0) return false;
+    var q = ms[ui].text; ms.splice(ui);
+    renderCompanion(qs("#view"), chId);
+    var ta = qs("#chatIn"); if (!ta) return false;
+    ta.value = q; sendChat(chId); return true;
+  }
   var XIAOZHI_ENDPOINT = "https://xiaozhi-proxy.spch321.workers.dev";
   var pendingAsk = null;
   var pendingAskAutoSend = false;
@@ -1769,8 +1891,11 @@ var UI_ZS = {
     var baseZs = "你是「小智」，《落实321》App内的AI陪读，人设是一位谦卑、有盼望、充满爱心的「321落实教练」。这个App收录晨读321全套一百七十三课（十个单元：迈进末后大复兴、复兴的焦点——耶稣、从心开始、观念的改变、无己、谦卑、舍己、生命、建立关系、服侍），核心是321理念：三个基础——耶稣是我的榜样、圣经是我的准则、圣灵是我的引导；两个核心——让耶稣作王、让耶稣得著一切的荣耀；一个目的——建立属神的体系。关键概念：有己是人类堕落的根源、骄傲是问题的根源；谦卑战胜骄傲、无己战胜撒但；改变观念的八大步骤（资讯、启示、信服、实践、检讨、修正、反复、繁殖）；先生命再关系后事工；920操练（每个与我有关系的人是我的2，活出无己0，结出9圣灵果子）；235关系（属灵同伴、属灵父母儿女、属灵战友）；用心靠圣灵不用脑靠自己；焦点在耶稣不在自己不在别人不在环境。" +
       "准则：①每一则回答都要「落实」：先回到圣经（引用和合本繁体全句并标出处），再回到321理念，最后给出一个今天就能做的最小行动；②涉及神学推论时诚实标示层级——A为圣经明文教导，B为可讨论的神学推论需说明「这是我的理解，欢迎与牧者再确认」，C为321的应用性语言；③遇到读者具体人生抉择，引导读者用321原则自己思考、鼓励与属灵父母／小组寻求印证，不直接替读者下判断；④语气谦卑、盼望、带著爱心，避免说教与居高临下；⑤这是手机聊天介面：整则回复约150-250字（除非读者要求详细），偶尔使用一个「##」小标题，优先用简短段落与条列，重点适度加粗，不用表格。";
     if (state.lang === "zs") base = baseZs.replace("和合本繁体", "和合本简体");
-    if (ch) base += (state.lang === "zs" ? "\n\n读者目前所在课别：" : "\n\n讀者目前所在課別：") + ch.numFull + "　" + ch.title + "（" + ch.partTitle + "）。本課主題經文：" + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " 本課操練：" + ch.practices.join("；") : "");
-    return base;
+    if (state.lang === "en") base = "You are Xiaozhi, the AI reading companion inside the app Living Out 321 — humble, hopeful and full of love, a \"321 coach\" who helps readers live out what they read. The app holds the whole 173-lesson 321 Morning Devotion series in ten units (Pressing On to the Last Great Revival; Jesus — the Focus of Revival; Revival Starts from the Heart; A Change of Mindset; Selflessness; Humility; Denying of Self; Life; Establishing Relationships; To Serve). Its heart is the 3-2-1 vision: the Three Foundations — Jesus is my role model, the Bible is my standard, the Holy Spirit is my guide; the Two Core Values — let Jesus be King, let Jesus receive all the glory; the Goal — establish God's system. Key ideas: the self-centred life is the root of humanity's fall, and pride is the root of the problem; humility overcomes pride, selflessness overcomes Satan; the eight stages of changing our mindset (Information, Revelation, Conviction, Implementation, Evaluation, Correction, Repetition, Multiplication); life first, then relationships, then ministry; the 920 practice (everyone I relate to is my \"2\"; live the selfless \"0\"; bear the ninefold \"9\" fruit of the Spirit); 235 relationships (spiritual companions, spiritual parents and children, spiritual comrades); rely on the heart and the Holy Spirit, not on the brain and ourselves; the focus is Jesus — not ourselves, not others, not our circumstances." +
+      " Guidelines: (1) Every answer must be lived out: first go back to Scripture (quote the World English Bible in full with the reference), then to the 321 vision, and end with one smallest step the reader can take today. (2) Be honest about levels when you reason theologically — A: plain biblical teaching; B: a theological inference open to discussion (say \"this is my understanding — please confirm with your pastor\"); C: 321's applied language. (3) When a reader faces a concrete life decision, help them think it through with 321 principles and encourage them to seek confirmation from their spiritual parents or small group; don't decide for them. (4) Tone: humble, hopeful, loving — never preachy or condescending. (5) This is a phone chat: about 150–250 words unless the reader asks for more, at most one \"##\" heading, short paragraphs and lists, some bold for key points, no tables. Answer in English.";
+    if (ch && state.lang === "en") base += "\n\nThe reader is now on: " + ch.numFull + " — " + ch.title + " (" + ch.partTitle + "). Key verse: " + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " Practices: " + ch.practices.join("; ") : "");
+    else if (ch) base += (state.lang === "zs" ? "\n\n读者目前所在课别：" : "\n\n讀者目前所在課別：") + ch.numFull + "　" + ch.title + "（" + ch.partTitle + "）。本課主題經文：" + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " 本課操練：" + ch.practices.join("；") : "");
+    return base + audExtra();
   }
 
   function requestWakeLock() {
@@ -1791,6 +1916,7 @@ var UI_ZS = {
     if (!companionQsPart) companionQsPart = curPartNo || 1;
 
     var html = '<div class="chatwrap">';
+    html += audBar();
     html += '<div class="chatlog" id="chatlog">';
     if (!chatSession.messages.length) {
       html += '<div class="msg ai">' + esc(t().companionIntro) + '</div>';
@@ -1815,6 +1941,13 @@ var UI_ZS = {
       html += '</div>';
       html += '</div>';
     });
+    var lastM = chatSession.messages[chatSession.messages.length - 1];
+    var fuList = (audData() && audData().aud[audKey()].fu) || [];
+    if (lastM && lastM.role === "ai" && !lastM.pending && lastM.ok && fuList.length) {
+      html += '<div class="fuwrap"><span class="fulb">' + esc(t().fuLabel) + '</span>' + fuList.map(function (f, fi) {
+        return '<button type="button" class="fuchip" data-fu="' + fi + '">' + f[0] + " " + esc(f[1]) + '</button>';
+      }).join("") + '</div>';
+    }
     html += '</div>';
 
     html += '<button type="button" class="qs-toggle" id="companionQsToggle">' + esc(companionQsOpen ? t().companionQsHide : t().companionQsToggle) + '</button>';
@@ -1909,6 +2042,25 @@ var UI_ZS = {
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(chId2); }
     });
 
+    var audT = qs("#audToggle", view);
+    if (audT) audT.addEventListener("click", function () { audOpen = !audOpen; renderCompanion(view, chId); });
+    qsa("[data-aud]", view).forEach(function (b) { b.addEventListener("click", function () {
+      state.user.aud = b.getAttribute("data-aud"); saveUser(); audOpen = false;
+      uiToast(t().audFor + audData().names[audKey()]); renderCompanion(view, chId);
+    }); });
+    qsa("[data-alen]", view).forEach(function (b) { b.addEventListener("click", function () {
+      var L = b.getAttribute("data-alen"); if (L === alenKey()) return;
+      state.user.alen = L; saveUser();
+      var nm = audData().lenNames[L];
+      if (reaskLast(chId2)) uiToast(t().reaskMsg.replace("{n}", nm)); else { uiToast(t().lenLabel + "：" + nm); renderCompanion(view, chId); }
+    }); });
+    var audF = qs("#audFs", view);
+    if (audF) audF.addEventListener("click", function () { cycleFont(); uiToast(t().fontSizeLabel + " " + (state.font + 1) + "/" + FONT_CLASS.length); });
+    qsa(".fuchip", view).forEach(function (b) { b.addEventListener("click", function () {
+      var f = fuList[parseInt(b.getAttribute("data-fu"), 10)]; if (!f) return;
+      chatInEl.value = f[2]; sendChat(chId2);
+    }); });
+
     qs("#companionQsToggle", view).addEventListener("click", function () {
       companionQsOpen = !companionQsOpen;
       renderCompanion(view, chId);
@@ -1986,13 +2138,14 @@ var UI_ZS = {
     chatSession.messages.push({ role: "ai", text: "…", id: thinkingId, pending: true });
     renderCompanion(qs("#view"), chId);
 
-    var payload = {
-      system: companionSystemPrompt(chId),
-      messages: chatSession.messages
-        .filter(function (m) { return m.id !== thinkingId; })
+    var hist = chatSession.messages
+        .filter(function (m) { return m.id !== thinkingId && !m.pending; })
         .slice(-12)
-        .map(function (m) { return { role: m.role === "user" ? "user" : "assistant", content: m.text }; }),
-    };
+        .map(function (m) { return { role: m.role === "user" ? "user" : "assistant", content: m.text }; });
+    while (hist.length && hist[0].role !== "user") hist.shift();
+    var sysText = companionSystemPrompt(chId);
+    function mkPayload(msgs) { return { model: "claude-sonnet-4-6", max_tokens: alenKey() === "full" ? 2400 : 1600, system: sysText, messages: msgs }; }
+    var payload = mkPayload(hist);
 
     // Look up the "…" placeholder by id (not array index) when the reply lands, since the
     // user may have deleted an earlier message in the meantime and shifted every index.
@@ -2001,17 +2154,45 @@ var UI_ZS = {
       return -1;
     }
 
-    fetch(XIAOZHI_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }).then(function (r) {
-      if (!r.ok) throw new Error("proxy error " + r.status);
-      return r.json();
-    }).then(function (data) {
-      var reply = extractReplyText(data);
+    function post(body) {
+      return fetch(XIAOZHI_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }).then(function (r) {
+        if (!r.ok) throw new Error("proxy error " + r.status);
+        return r.json();
+      });
+    }
+    var contN = 0;
+    function joinPiece(acc, piece) {
+      piece = String(piece || "").replace(/^\s*(好的|好|OK|Okay|Sure)[，,。.!！]?\s*/i, "");
+      var max = Math.min(40, acc.length, piece.length), k;
+      for (k = max; k >= 4; k--) { if (acc.slice(-k) === piece.slice(0, k)) { piece = piece.slice(k); break; } }
+      var head = piece.replace(/^\s+/, "");
+      if (/^(#{1,6} |>|---)/.test(head)) return acc.replace(/\s+$/, "") + "\n\n" + head;
+      if (/^([-*] |\d+[.)] |\|)/.test(head)) return acc.replace(/\s+$/, "") + "\n" + head;
+      return acc + piece;
+    }
+    function step(acc, data) {
+      var stop = (data && (data.stop_reason || data.finish_reason)) || "";
+      if ((stop === "max_tokens" || stop === "length") && contN < 4) {
+        contN++;
+        var idx0 = findMsgIdxById(thinkingId);
+        if (idx0 >= 0) { chatSession.messages[idx0].text = acc; renderCompanion(qs("#view"), chId); var lg = qs("#chatlog"); if (lg) lg.scrollTop = lg.scrollHeight; }
+        return post(mkPayload(hist.concat([{ role: "assistant", content: acc }, { role: "user", content: t().contAsk }]))).then(function (d2) {
+          var more = extractReplyText(d2);
+          if (!more) return acc;
+          return step(joinPiece(acc, more), d2);
+        }, function () { return acc; });
+      }
+      return acc;
+    }
+    post(payload).then(function (data) {
+      return step(extractReplyText(data) || "", data);
+    }).then(function (reply) {
       var idx = findMsgIdxById(thinkingId);
-      if (idx >= 0) chatSession.messages[idx] = { role: "ai", text: reply || (state.lang === "en" ? "(no reply)" : "（沒有收到回覆）"), id: thinkingId };
+      if (idx >= 0) chatSession.messages[idx] = { role: "ai", text: reply || (state.lang === "en" ? "(no reply)" : "（沒有收到回覆）"), id: thinkingId, ok: !!reply };
       renderCompanion(qs("#view"), chId);
       var log2 = qs("#chatlog"); if (log2) log2.scrollTop = log2.scrollHeight;
     }).catch(function (err) {
@@ -2256,7 +2437,7 @@ var UI_ZS = {
     var html = '<div class="card"><div class="section-title" style="margin-top:0">' + esc(t().meProgress) + '</div>';
     html += '<div style="font-size:26px;font-weight:800;color:var(--accent);">' + doneCount + ' <span style="font-size:14px;color:var(--ink-faint);font-weight:600;">/ ' + ids.length + '</span></div>';
     html += '<div style="height:8px;background:var(--surface-alt);border-radius:4px;margin-top:8px;overflow:hidden;"><div style="height:100%;background:var(--accent);width:' + Math.round(doneCount / ids.length * 100) + '%;"></div></div>';
-    html += '<div style="display:flex;gap:8px;margin-top:10px"><a class="btn" style="flex:1" href="#/tools/journey">🧭 旅程</a><a class="btn" style="flex:1" href="#/tools/920">🍇 920</a></div></div>';
+    html += '<div style="display:flex;gap:8px;margin-top:10px"><a class="btn" style="flex:1" href="#/tools/journey">🧭 ' + L3("旅程", "Journey") + '</a><a class="btn" style="flex:1" href="#/tools/920">🍇 920</a></div></div>';
 
     html += '<div class="section-title">' + esc(t().meDeclarations) + '</div><div class="card">';
     var decls = state.user.declarations.slice().reverse();
@@ -2267,7 +2448,7 @@ var UI_ZS = {
     html += '<div class="section-title">' + esc(t().mePractices) + '</div><div class="card">';
     var log = state.user.practiceLog.slice().reverse();
     if (!log.length) html += '<div class="empty">' + esc(t().meNoPractices) + '</div>';
-    log.slice(0, 20).forEach(function (l) { html += '<div class="declitem"><div class="d">' + esc(l.text) + '</div><div class="m">' + esc(l.chTitle) + (l.person ? ' · 為 ' + esc(l.person) : '') + ' · ' + fmtDate(l.at) + '</div></div>'; });
+    log.slice(0, 20).forEach(function (l) { html += '<div class="declitem"><div class="d">' + esc(l.text) + '</div><div class="m">' + esc(l.chTitle) + (l.person ? L3(' · 為 ', ' · for ') + esc(l.person) : '') + ' · ' + fmtDate(l.at) + '</div></div>'; });
     html += '</div>';
 
     html += '<div class="section-title">' + esc(t().meHighlights) + '</div><div class="card">';
@@ -2288,13 +2469,13 @@ var UI_ZS = {
     html += '</div>';
 
     html += '<div class="section-title">' + esc(t().meSettings) + '</div><div class="card">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span>外觀</span><div class="langswitch" id="themeswitch"><button data-theme="light">' + esc(t().themeLight) + '</button><button data-theme="dark">' + esc(t().themeDark) + '</button><button data-theme="auto">' + esc(t().themeAuto) + '</button></div></div>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;"><span>' + L3("外觀", "Appearance") + '</span><div class="langswitch" id="themeswitch"><button data-theme="light">' + esc(t().themeLight) + '</button><button data-theme="dark">' + esc(t().themeDark) + '</button><button data-theme="auto">' + esc(t().themeAuto) + '</button></div></div>';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + esc(t().meFontSize) + '</span><div class="langswitch" id="fontswitch"><button data-font="0">' + esc(t().fontStandard) + '</button><button data-font="1">' + esc(t().fontLarge) + '</button><button data-font="2">' + esc(t().fontXLarge) + '</button><button data-font="3">' + esc(t().fontXXLarge) + '</button></div></div>';
     var voiceOpts = TTS_VOICE_OPTIONS[state.lang] || TTS_VOICE_OPTIONS.zh;
     var curVoiceId = (state.user.ttsVoice && state.user.ttsVoice[state.lang]) || TTS_VOICE_DEFAULT[state.lang];
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + esc(t().meVoice) + '</span><div class="langswitch" id="voiceswitch">' + voiceOpts.map(function (o) { return '<button data-voice="' + esc(o.id) + '">' + esc(o.label) + '</button>'; }).join("") + '</div></div>';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>資料備份</span><div style="display:flex;gap:6px"><button class="btn" id="exportData" style="padding:6px 10px;font-size:12.5px">匯出</button><button class="btn" id="importData" style="padding:6px 10px;font-size:12.5px">匯入</button><input type="file" id="importFile" accept="application/json" hidden></div></div>';
-    html += '<p class="muted" style="margin:8px 0 0;font-size:11.5px">落實321 v' + VERSION + ' · 資料只存在這台裝置，換手機前請先匯出備份。</p></div>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + L3("資料備份", "Backup") + '</span><div style="display:flex;gap:6px"><button class="btn" id="exportData" style="padding:6px 10px;font-size:12.5px">' + L3("匯出", "Export") + '</button><button class="btn" id="importData" style="padding:6px 10px;font-size:12.5px">' + L3("匯入", "Import") + '</button><input type="file" id="importFile" accept="application/json" hidden></div></div>';
+    html += '<p class="muted" style="margin:8px 0 0;font-size:11.5px">' + esc(t().brand) + ' v' + VERSION + L3(' · 資料只存在這台裝置，換手機前請先匯出備份。', ' · Your data stays on this device only. Export a backup before changing phones.') + '</p></div>';
     view.innerHTML = html;
     qsa("#themeswitch button", view).forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-theme") === state.user.theme); b.addEventListener("click", function () { state.user.theme = b.getAttribute("data-theme"); saveUser(); applyTheme(); renderMe(view); }); });
     qsa("#fontswitch button", view).forEach(function (b) { b.classList.toggle("active", parseInt(b.getAttribute("data-font"), 10) === state.font); b.addEventListener("click", function () { setFont(parseInt(b.getAttribute("data-font"), 10)); renderMe(view); }); });
@@ -2304,13 +2485,13 @@ var UI_ZS = {
       try {
         var blob = new Blob([JSON.stringify(state.user, null, 1)], { type: "application/json" });
         var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "luoshi321-backup-" + fmtDate(Date.now()) + ".json"; document.body.appendChild(a); a.click(); a.remove();
-      } catch (e) { uiToast("匯出失敗"); }
+      } catch (e) { uiToast(L3("匯出失敗", "Export failed")); }
     });
     qs("#importData", view).addEventListener("click", function () { qs("#importFile", view).click(); });
     qs("#importFile", view).addEventListener("change", function (e) {
       var f = e.target.files && e.target.files[0]; if (!f) return;
       var rd = new FileReader();
-      rd.onload = function () { try { var obj = JSON.parse(rd.result); if (!obj || typeof obj !== "object" || !("highlights" in obj)) throw new Error("bad"); var def = userDefaults(); for (var k in def) if (!(k in obj)) obj[k] = def[k]; state.user = obj; saveUser(); applyTheme(); uiToast("已匯入"); renderMe(view); } catch (err) { uiToast("匯入失敗：檔案格式不符"); } };
+      rd.onload = function () { try { var obj = JSON.parse(rd.result); if (!obj || typeof obj !== "object" || !("highlights" in obj)) throw new Error("bad"); var def = userDefaults(); for (var k in def) if (!(k in obj)) obj[k] = def[k]; state.user = obj; saveUser(); applyTheme(); uiToast(L3("已匯入", "Imported")); renderMe(view); } catch (err) { uiToast(L3("匯入失敗：檔案格式不符", "Import failed: wrong file format")); } };
       rd.readAsText(f);
     });
   }
@@ -2334,6 +2515,10 @@ var UI_ZS = {
     spkStopAll();
     state.lang = lang;
     try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    if (lang === "en" || document.documentElement.getAttribute("data-lang") === "en") {
+      try { location.reload(); } catch (e) {}
+      return;
+    }
     state.index = null; state.units = {}; state.d = { chapters: {}, companionQs: [] }; state.tracks = null;
     document.documentElement.setAttribute("data-lang", lang);
     qsa("#langswitch button").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-lang") === lang); });
@@ -2353,7 +2538,7 @@ var UI_ZS = {
       setTimeout(function () { loadUnit(u ? u.n : 1).catch(function () {}); }, 800);
     }).catch(function (err) {
       finishBoot();
-      qs("#view").innerHTML = '<div class="empty">載入內容失敗，請檢查網路連線後重新整理。<br><span style="font-size:11px;">' + esc(String(err)) + '</span></div>';
+      qs("#view").innerHTML = '<div class="empty">' + L3("載入內容失敗，請檢查網路連線後重新整理。", "Couldn't load the content. Please check your connection and reload.") + '<br><span style="font-size:11px;">' + esc(String(err)) + '</span></div>';
     });
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
   }
