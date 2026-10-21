@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.2.0";
+  var VERSION = "1.2.1";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1440,15 +1440,8 @@ var UI_ZS = {
     var zhW = ["日", "一", "二", "三", "四", "五", "六"][wd], enW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wd];
     return state.lang === "en" ? (enW + " " + (dt.getUTCMonth() + 1) + "/" + dt.getUTCDate()) : ((dt.getUTCMonth() + 1) + "/" + dt.getUTCDate() + L3("（週", "") + zhW + "）");
   }
-  // 晨讀進度的一堂＝晨讀321 的一課：本 App 分成上、下的課（第三課、第六課）在同一堂一起讀
-  function groupSessions() {
-    var out = [], last = null;
-    chapterIds().forEach(function (id) {
-      var n = id.replace(/[ab]$/, "");
-      if (n === last) out[out.length - 1].push(id); else { out.push([id]); last = n; }
-    });
-    return out;
-  }
+  // 晨讀進度一堂一課，共 173 堂：第三課、第六課的上、下各算一堂（與晨讀321 同一套進度）
+  function groupSessions() { return chapterIds().map(function (id) { return [id]; }); }
   function sessLabel(ids) {
     var m = lessonMeta(ids[0]); if (!m) return "";
     if (ids.length === 1) return m.no + "　" + m.title;
