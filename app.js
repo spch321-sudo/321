@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.5";
+  var VERSION = "1.1.6";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -195,6 +195,8 @@ var UI_ZS = {
   // ---------------------------------------------------------------
   var TTS_ENDPOINT = "https://azure-tts.spch321.workers.dev";
   var TTS_SIL_SENTENCE = 140, TTS_SIL_COMMA = 140, TTS_SIL_ENUM = 260;
+  // 小智回答用「說話」的節奏：句間、逗號停頓短一點，自然地接下一句
+  var TTS_SIL_TALK = [60, 50, 120], spkTalk = false;
   // 每個語言版本可選的朗讀聲音——跟姊妹App「晨讀321」共用同一個Worker、同一批Azure真人語音，
   // 使用者可在「我的」分頁依目前所在的語言版本切換；voice id存在 state.user.ttsVoice[lang]。
   var TTS_VOICE_OPTIONS = {
@@ -778,7 +780,7 @@ var UI_ZS = {
     return fetch(TTS_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ voice: voice, rate: rate, sil: TTS_SIL_SENTENCE, silc: TTS_SIL_COMMA, sile: TTS_SIL_ENUM, text: piece }),
+      body: JSON.stringify({ voice: voice, rate: rate, sil: spkTalk ? TTS_SIL_TALK[0] : TTS_SIL_SENTENCE, silc: spkTalk ? TTS_SIL_TALK[1] : TTS_SIL_COMMA, sile: spkTalk ? TTS_SIL_TALK[2] : TTS_SIL_ENUM, text: piece }),
     }).then(function (res) {
       if (!res.ok) throw new Error("TTS HTTP " + res.status);
       return res;
@@ -811,7 +813,7 @@ var UI_ZS = {
   }
   function yunFetchBuffer(piece) {
     var voice = ttsVoiceName(), rate = "+0%";
-    var key = ttsCacheKeyFor(voice, rate, piece);
+    var key = ttsCacheKeyFor(voice, rate + (spkTalk ? "|talk" : ""), piece);
     if (TTS_INFLIGHT[key]) return TTS_INFLIGHT[key];
     var canCache = ("caches" in window) && ("Request" in window);
     var req = canCache ? new Request(key) : null;
@@ -991,6 +993,7 @@ var UI_ZS = {
       updateSpeakButtons();
     } else {
       spkStopAll();
+      spkTalk = false; // 小智回答的 buildQueue 會自己改成說話節奏
       var queue = buildQueue();
       var els = buildQueueEls ? buildQueueEls() : [];
       speakStart(key, queue, title, els);
@@ -1047,12 +1050,32 @@ var UI_ZS = {
   // Reads one companion reply aloud — reuses mdToHtml()+stripHtml() to turn the markdown
   // back into clean spoken text (headers/bold/table syntax stripped, not read as symbols),
   // then the same pronunciation-fix + chunking pipeline as chapter reading.
+  // 小智回答 → 自然的口語文字：拿掉 # * > --- 等記號、引號與括號裡的經文出處，每一行補上句末標點，
+  // 讓聲音在小標題、條列之間有短而自然的停頓，而不是把標題黏著下一句唸、或把記號唸出來。
+  function mdSpeakText(md) {
+    var en = state.lang === "en", out = [];
+    String(md || "").replace(/\r\n/g, "\n").split("\n").forEach(function (line) {
+      var l = line.trim();
+      if (!l || /^(-{3,}|\*{3,}|_{3,})$/.test(l)) return;
+      if (/^\|?[\s:|-]+\|[\s:|-]*\|?$/.test(l)) return;              // 表格分隔列
+      l = l.replace(/^#{1,6}\s*/, "").replace(/^>\s?/, "").replace(/^[-*•]\s+/, "");
+      l = l.replace(/^\|/, "").replace(/\|$/, "").replace(/\s*\|\s*/g, en ? ", " : "，");
+      l = l.replace(/\*\*|__|`/g, "").replace(/(^|[^\w*])\*([^*\n]+)\*/g, "$1$2").replace(/[*#]/g, "");
+      l = l.replace(/[（(]\s*(參|见|見|參看|另見|cf\.|see)?\s*[^（）()]*\d+\s*[:：]\s*\d+[^（）()]*[）)]/gi, ""); // 括號裡的經文出處不唸
+      if (!en) l = l.replace(/[「」『』《》〈〉]/g, "").replace(/——|—/g, "，");
+      l = l.trim();
+      if (!l) return;
+      if (!/[。！？；.!?;：:，,]$/.test(l)) l += en ? "." : "。";
+      out.push(l);
+    });
+    return out.join(en ? " " : "");
+  }
   function speakToggleForMsg(mi) {
     var m = chatSession.messages[mi];
     if (!m || m.role !== "ai" || m.pending) return;
     if (!m.id) m.id = newMsgId();
-    var plain = stripHtml(mdToHtml(m.text));
-    speakToggle("msg:" + m.id, function () { return spkChunks(ttsPronounceFix(plain)); }, t().companionTitle);
+    var plain = mdSpeakText(m.text);
+    speakToggle("msg:" + m.id, function () { spkTalk = true; return spkChunks(ttsPronounceFix(plain)); }, t().companionTitle);
   }
   function uiToast(msg) {
     try {
@@ -1196,6 +1219,7 @@ var UI_ZS = {
     s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
     s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
     s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<i>$2</i>");
+    s = s.replace(/\*\*/g, "").replace(/(^|\s)#{1,6}(?=\s)/g, "$1"); // 沒配對到的 ** 與 # 記號不顯示
     return s;
   }
   function mdToHtml(text) {
@@ -1941,7 +1965,7 @@ var UI_ZS = {
     var baseZs = "你是「小智」，《落实321》App内的AI陪读，人设是一位谦卑、有盼望、充满爱心的「321落实教练」。这个App收录晨读321全套一百七十三课（十个单元：迈进末后大复兴、复兴的焦点——耶稣、从心开始、观念的改变、无己、谦卑、舍己、生命、建立关系、服侍），核心是321理念：三个基础——耶稣是我的榜样、圣经是我的准则、圣灵是我的引导；两个核心——让耶稣作王、让耶稣得著一切的荣耀；一个目的——建立属神的体系。关键概念：有己是人类堕落的根源、骄傲是问题的根源；谦卑战胜骄傲、无己战胜撒但；改变观念的八大步骤（资讯、启示、信服、实践、检讨、修正、反复、繁殖）；先生命再关系后事工；920操练（每个与我有关系的人是我的2，活出无己0，结出9圣灵果子）；235关系（属灵同伴、属灵父母儿女、属灵战友）；用心靠圣灵不用脑靠自己；焦点在耶稣不在自己不在别人不在环境。" +
       "准则：①每一则回答都要「落实」：先回到圣经（引用和合本繁体全句并标出处），再回到321理念，最后给出一个今天就能做的最小行动；②涉及神学推论时诚实标示层级——A为圣经明文教导，B为可讨论的神学推论需说明「这是我的理解，欢迎与牧者再确认」，C为321的应用性语言；③遇到读者具体人生抉择，引导读者用321原则自己思考、鼓励与属灵父母／小组寻求印证，不直接替读者下判断；④语气谦卑、盼望、带著爱心，避免说教与居高临下；⑤这是手机聊天介面：整则回复约150-250字（除非读者要求详细），偶尔使用一个「##」小标题，优先用简短段落与条列，重点适度加粗，不用表格。";
     if (state.lang === "zs") base = baseZs.replace("和合本繁体", "和合本简体");
-    if (state.lang === "en") base = "You are Xiaozhi, the AI reading companion inside the app Living Out 321 — humble, hopeful and full of love, a \"321 coach\" who helps readers live out what they read. The app holds the whole 173-lesson 321 Morning Devotion series in ten units (Pressing On to the Last Great Revival; Jesus — the Focus of Revival; Revival Starts from the Heart; A Change of Mindset; Selflessness; Humility; Denying of Self; Life; Establishing Relationships; To Serve). Its heart is the 3-2-1 vision: the Three Foundations — Jesus is my role model, the Bible is my standard, the Holy Spirit is my guide; the Two Core Values — let Jesus be King, let Jesus receive all the glory; the Goal — establish God's system. Key ideas: the self-centred life is the root of humanity's fall, and pride is the root of the problem; humility overcomes pride, selflessness overcomes Satan; the eight stages of changing our mindset (Information, Revelation, Conviction, Implementation, Evaluation, Correction, Repetition, Multiplication); life first, then relationships, then ministry; the 920 practice (everyone I relate to is my \"2\"; live the selfless \"0\"; bear the ninefold \"9\" fruit of the Spirit); 235 relationships (spiritual companions, spiritual parents and children, spiritual comrades); rely on the heart and the Holy Spirit, not on the brain and ourselves; the focus is Jesus — not ourselves, not others, not our circumstances." +
+    if (state.lang === "en") base = "You are Xiaozhi, the AI reading companion inside the app Living Out 321 — humble, hopeful and full of love, a \"321 coach\" who helps readers live out what they read. The app holds the whole 173-lesson 321 Morning Devotion series in ten units (Towards the End Time Revival; Jesus — the Focus of Revival; Revival Starts from the Heart; A Change of Mindset; Selflessness; Humility; Denying of Self; Life; Establishing Relationships; To Serve). Its heart is the 3-2-1 vision: the Three Foundations — Jesus is my role model, the Bible is my standard, the Holy Spirit is my guide; the Two Core Values — let Jesus be King, let Jesus receive all the glory; the Goal — establish God's system. Key ideas: the self-centred life is the root of humanity's fall, and pride is the root of the problem; humility overcomes pride, selflessness overcomes Satan; the eight stages of changing our mindset (Information, Revelation, Conviction, Implementation, Evaluation, Correction, Repetition, Multiplication); life first, then relationships, then ministry; the 920 practice (everyone I relate to is my \"2\"; live the selfless \"0\"; bear the ninefold \"9\" fruit of the Spirit); 235 relationships (spiritual companions, spiritual parents and children, spiritual comrades); rely on the heart and the Holy Spirit, not on the brain and ourselves; the focus is Jesus — not ourselves, not others, not our circumstances." +
       " Guidelines: (1) Every answer must be lived out: first go back to Scripture (quote the World English Bible in full with the reference), then to the 321 vision, and end with one smallest step the reader can take today. (2) Be honest about levels when you reason theologically — A: plain biblical teaching; B: a theological inference open to discussion (say \"this is my understanding — please confirm with your pastor\"); C: 321's applied language. (3) When a reader faces a concrete life decision, help them think it through with 321 principles and encourage them to seek confirmation from their spiritual parents or small group; don't decide for them. (4) Tone: humble, hopeful, loving — never preachy or condescending. (5) This is a phone chat: about 150–250 words unless the reader asks for more, at most one \"##\" heading, short paragraphs and lists, some bold for key points, no tables. Answer in English.";
     if (ch && state.lang === "en") base += "\n\nThe reader is now on: " + ch.numFull + " — " + ch.title + " (" + ch.partTitle + "). Key verse: " + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " Practices: " + ch.practices.join("; ") : "");
     else if (ch) base += (state.lang === "zs" ? "\n\n读者目前所在课别：" : "\n\n讀者目前所在課別：") + ch.numFull + "　" + ch.title + "（" + ch.partTitle + "）。本課主題經文：" + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " 本課操練：" + ch.practices.join("；") : "");
@@ -1977,7 +2001,7 @@ var UI_ZS = {
         return;
       }
       if (m.pending) {
-        html += '<div class="msg ai">' + esc(m.text) + '</div>';
+        html += m.partial ? '<div class="msg ai"><div class="msg-body">' + mdToHtml(m.text) + '</div><div class="msg-cont">✍️ ' + esc(L3("小智繼續寫…", "Xiaozhi is still writing…")) + '</div></div>' : '<div class="msg ai">' + esc(m.text) + '</div>';
         return;
       }
       var isFav = !!(m.id && state.user.favorites.some(function (f) { return f.msgId === m.id; }));
@@ -2229,7 +2253,7 @@ var UI_ZS = {
       if ((stop === "max_tokens" || stop === "length") && contN < 4) {
         contN++;
         var idx0 = findMsgIdxById(thinkingId);
-        if (idx0 >= 0) { chatSession.messages[idx0].text = acc; renderCompanion(qs("#view"), chId); var lg = qs("#chatlog"); if (lg) lg.scrollTop = lg.scrollHeight; }
+        if (idx0 >= 0) { chatSession.messages[idx0].text = acc; chatSession.messages[idx0].partial = true; renderCompanion(qs("#view"), chId); var lg = qs("#chatlog"); if (lg) lg.scrollTop = lg.scrollHeight; }
         return post(mkPayload(hist.concat([{ role: "assistant", content: acc }, { role: "user", content: t().contAsk }]))).then(function (d2) {
           var more = extractReplyText(d2);
           if (!more) return acc;
