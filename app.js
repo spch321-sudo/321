@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.8";
+  var VERSION = "1.1.9";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -483,7 +483,7 @@ var UI_ZS = {
     var hasBookDigit = new RegExp("(" + alt + ")\\s*[0-9一二三四五六七八九十百千]");
     var refToken = lang === "en"
       ? new RegExp("(" + alt + ")\\s+[0-9]{1,3}\\s*[:：]\\s*[0-9]{1,3}(?:\\s*[-–~]\\s*[0-9]{1,3})?", "g")
-      : new RegExp("(" + alt + ")\\s*[一二三四五六七八九十百千0-9]+\\s*章\\s*[一二三四五六七八九十百千0-9]*(?:\\s*[至到\\-–~]\\s*[一二三四五六七八九十百千0-9]+)?\\s*[節节]?", "g");
+      : new RegExp("(" + alt + ")\\s*(?:[0-9]{1,3}\\s*[:：]\\s*[0-9]{1,3}(?:\\s*[-–~至到]\\s*[0-9]{1,3})?(?:\\s*[:：]\\s*[0-9]{1,3})?|[一二三四五六七八九十百千0-9]+\\s*[章篇]\\s*[一二三四五六七八九十百千0-9]*(?:\\s*[至到\\-–~]\\s*[一二三四五六七八九十百千0-9]+)?\\s*[節节]?)", "g");
     return String(text || "").replace(/\s?[（(]([^（）()]*)[）)]/g, function (m, inner) {
       if (!hasBookDigit.test(inner)) return m; // no "book name + number" inside → not a reference, leave untouched
       var t = inner.replace(refToken, "");
@@ -492,7 +492,7 @@ var UI_ZS = {
       // make the SC edition wrongly conclude "something meaningful remains" and keep the whole
       // parenthetical un-stripped, even though the reference token itself had matched fine.
       t = lang === "en" ? t.replace(/\b(and|cf|see)\b/gi, "") : t.replace(/[、，,;；和與与及節节章篇上下至到參参见見cf]/gi, "");
-      t = t.replace(/[\s\-–~:：]/g, "");
+      t = t.replace(/[\s\-–~:：0-9]/g, ""); // 剩下只有數字（如「25:10,13」的 13）也算出處
       return t.length ? m : ""; // anything meaningful left over → keep the whole parenthetical as-is
     });
   }
@@ -586,6 +586,7 @@ var UI_ZS = {
     raState.userScrollUntil = 0;
   }
   function spkOnItemStart(idx) {
+    try { miniPlayerUpdate(); } catch (e) {}
     var el = (spk.queueEls && spk.queueEls[idx]) || null;
     if (el === raState.curEl) return; // already the highlighted one — nothing to do
     raClearHighlight();
@@ -832,6 +833,12 @@ var UI_ZS = {
   // <audio> element throughout. Combined with ttsPrefetchAhead() above, only the very first
   // chunk is ever waited on "cold"; every later chunk is normally already fetched by the
   // time it's needed.
+  document.addEventListener("visibilitychange", function () {
+    // 切到背景或鎖屏：多預抓幾段，讓背景裡一路唸下去不用等網路
+    if (document.hidden && spk.active && spk.mode !== "native") {
+      for (var d = 1; d <= 16 && spk.idx + d < spk.queue.length; d++) { (function (p) { yunFetchBuffer(p).catch(function () {}); })(spk.queue[spk.idx + d]); }
+    }
+  });
   function spkAdvanceAzure(myToken) {
     if (myToken !== spk.token) return;
     if (spk.idx >= spk.queue.length) { spkStopAll(); return; }
@@ -888,7 +895,27 @@ var UI_ZS = {
   // Every 🔊 button in the currently-rendered view (the chapter toolbar's, or one per
   // companion reply) carries a data-speak-key; whichever one matches spk.curKey shows
   // playing/paused, every other one shows idle — so any number of them can coexist.
+  // ── 背景朗讀：迷你播放列（標題・第 n/N 段・暫停／繼續・停止），換頁也繼續唸 ──
+  function miniPlayerUpdate() {
+    var bar = qs("#miniPlayer");
+    if (!spk.active) { if (bar) bar.remove(); return; }
+    if (!bar) {
+      bar = document.createElement("div"); bar.id = "miniPlayer";
+      bar.innerHTML = '<button type="button" class="mp-t" id="mpGo"></button><button type="button" class="mp-b" id="mpPP"></button><button type="button" class="mp-b" id="mpStop" aria-label="stop">■</button>';
+      document.body.appendChild(bar);
+      qs("#mpPP").addEventListener("click", function () { if (spk.curKey) speakToggle(spk.curKey, function () { return []; }, spk.title); });
+      qs("#mpStop").addEventListener("click", function () { spkStopAll(); });
+      qs("#mpGo").addEventListener("click", function () {
+        var k = spk.curKey || "";
+        if (k.indexOf("ch:") === 0) navigate("#/course/" + k.slice(3)); else if (k.indexOf("msg:") === 0) navigate("#/companion");
+      });
+    }
+    var n = spk.queue.length, i = Math.min(spk.idx + 1, n);
+    qs("#mpGo").innerHTML = '<span class="mp-ic">🎧</span><span class="mp-tt">' + esc(spk.title || t().brand) + '</span><span class="mp-n">' + (n ? i + "/" + n : "") + '</span>';
+    qs("#mpPP").textContent = spk.loading ? "⏳" : (spk.paused ? "▶" : "⏸");
+  }
   function updateSpeakButtons() {
+    miniPlayerUpdate();
     qsa("[data-speak-key]").forEach(function (btn) {
       var key = btn.getAttribute("data-speak-key");
       if (spk.active && spk.curKey === key) {
@@ -988,7 +1015,7 @@ var UI_ZS = {
     var texts = [], els = [];
     function pushItem(raw, el) {
       var fixed = ttsPronounceFix(ttsEnsureEnd(raw));
-      if (!fixed || !fixed.trim()) return;
+      if (!fixed || !fixed.replace(/[\s。．.，,；;：:！!？?、「」『』（）()—–-]/g, "")) return; // 只剩標點（例如整句是括號出處）就不唸
       texts.push(fixed);
       els.push(el || null);
     }
@@ -1096,6 +1123,7 @@ var UI_ZS = {
       remind: { on: false, hour: 7 },
       theme: "auto",
       ttsVoice: { zh: "yunjhe", zs: "yunfan", en: "andrew" },
+      bgRead: true,        // 背景朗讀：換頁、鎖定螢幕時繼續唸
       aud: "adult",        // 小智回答對象（十種）
       alen: "mid",         // 小智回答長度 brief｜mid｜full
     };
@@ -1309,7 +1337,7 @@ var UI_ZS = {
     if (spk.active) {
       var stillOnSameChapter = root === "course" && parts[1] && ("ch:" + parts[1]) === spk.curKey;
       var stillOnCompanion = root === "companion" && spk.curKey && spk.curKey.indexOf("msg:") === 0;
-      if (!stillOnSameChapter && !stillOnCompanion) spkStopAll();
+      if (!stillOnSameChapter && !stillOnCompanion && !(state.user.bgRead !== false)) spkStopAll();
     }
     var view = qs("#view");
     view.innerHTML = "";
@@ -1317,7 +1345,13 @@ var UI_ZS = {
     qs("#brandName").textContent = t().brand;
     document.title = t().brand;
     if (root === "today") return renderToday(view);
-    if (root === "course" && parts[1]) return withChapter(view, parts[1], function (ch) { renderChapter(view, parts[1], parts[2] || "read", parts[3]); });
+    if (root === "course" && parts[1]) return withChapter(view, parts[1], function (ch) {
+      renderChapter(view, parts[1], parts[2] || "read", parts[3]);
+      // 背景朗讀中回到這一課：把跟讀標示接回新畫面
+      if (spk.active && spk.curKey === "ch:" + parts[1]) setTimeout(function () {
+        try { var q = buildChapterReadAlongQueue(); if (q.els.length === spk.queue.length) { spk.queueEls = q.els; raState.curEl = null; spkOnItemStart(spk.idx); } } catch (e) {}
+      }, 400);
+    });
     if (root === "course") return renderCourseList(view);
     if (root === "tools" && parts[1] === "journey") return renderJourney(view);
     if (root === "tools" && parts[1] === "tracks") return renderTracks(view);
@@ -2583,9 +2617,11 @@ var UI_ZS = {
     var voiceOpts = TTS_VOICE_OPTIONS[state.lang] || TTS_VOICE_OPTIONS.zh;
     var curVoiceId = (state.user.ttsVoice && state.user.ttsVoice[state.lang]) || TTS_VOICE_DEFAULT[state.lang];
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + esc(t().meVoice) + '</span><div class="langswitch" id="voiceswitch">' + voiceOpts.map(function (o) { return '<button data-voice="' + esc(o.id) + '">' + esc(o.label) + '</button>'; }).join("") + '</div></div>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>🎧 ' + L3("背景朗讀", "Background reading") + '<br><span class="muted" style="font-size:11.5px">' + L3("換到別頁、鎖定螢幕時繼續唸", "Keeps reading when you switch pages or lock the screen") + '</span></span><div class="langswitch" id="bgswitch"><button data-bg="1">' + L3("開", "On") + '</button><button data-bg="0">' + L3("關", "Off") + '</button></div></div>';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);"><span>' + L3("資料備份", "Backup") + '</span><div style="display:flex;gap:6px"><button class="btn" id="exportData" style="padding:6px 10px;font-size:12.5px">' + L3("匯出", "Export") + '</button><button class="btn" id="importData" style="padding:6px 10px;font-size:12.5px">' + L3("匯入", "Import") + '</button><input type="file" id="importFile" accept="application/json" hidden></div></div>';
     html += '<p class="muted" style="margin:8px 0 0;font-size:11.5px">' + esc(t().brand) + ' v' + VERSION + L3(' · 資料只存在這台裝置，換手機前請先匯出備份。', ' · Your data stays on this device only. Export a backup before changing phones.') + '</p></div>';
     view.innerHTML = html;
+    qsa("#bgswitch button", view).forEach(function (b) { var on = state.user.bgRead !== false; b.classList.toggle("active", (b.getAttribute("data-bg") === "1") === on); b.addEventListener("click", function () { state.user.bgRead = b.getAttribute("data-bg") === "1"; saveUser(); renderMe(view); }); });
     var mw = qs("#meWorks", view); if (mw) mw.addEventListener("click", function () { try { window.GXU.works(); } catch (e) { uiToast(L3("美圖工作室還在載入，請稍後再試", "The card studio is still loading — please try again")); } });
     qsa("#themeswitch button", view).forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-theme") === state.user.theme); b.addEventListener("click", function () { state.user.theme = b.getAttribute("data-theme"); saveUser(); applyTheme(); renderMe(view); }); });
     qsa("#fontswitch button", view).forEach(function (b) { b.classList.toggle("active", parseInt(b.getAttribute("data-font"), 10) === state.font); b.addEventListener("click", function () { setFont(parseInt(b.getAttribute("data-font"), 10)); renderMe(view); }); });
