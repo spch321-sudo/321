@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.2.1";
+  var VERSION = "1.3.0";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
