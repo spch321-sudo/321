@@ -1585,7 +1585,8 @@ var UI_ZS = {
   }
   function modeBar(chId, mode) {
     var modes = [["read", t().modeRead, t().modeReadDesc], ["share", t().modeShare, t().modeShareDesc], ["teach", t().modeTeach, t().modeTeachDesc], ["lead", t().modeLead, t().modeLeadDesc]];
-    if (state.lang === "en") return '<div class="muted" style="font-size:12px;margin:8px 0">' + esc(t().modeReadDesc) + ' · The Share, Teach and Lead modes (blog, slides, prompter) are in the Chinese editions for now.</div>';
+    var chx = D() && D().chapters ? D().chapters[chId] : null;
+    if (state.lang === "en" && !(chx && chx.blog)) return '<div class="muted" style="font-size:12px;margin:8px 0">' + esc(t().modeReadDesc) + '</div>';
     var html = '<div class="langswitch modebar" style="display:flex;width:100%;margin:8px 0 4px">';
     modes.forEach(function (m) { html += '<a href="#/course/' + chId + '/' + m[0] + '" class="' + (mode === m[0] ? "active" : "") + '" style="flex:1;text-align:center;padding:8px 4px;font-weight:700;font-size:14px;text-decoration:none;color:' + (mode === m[0] ? '#fff' : 'var(--ink-soft)') + ';background:' + (mode === m[0] ? 'var(--accent)' : 'var(--surface)') + '">' + esc(m[1]) + '</a>'; });
     html += '</div>';
@@ -1618,7 +1619,7 @@ var UI_ZS = {
     saveUser();
     // 背景預抓下一單元
     var u = unitOf(chId); if (u && u.n < 10 && !state.units[u.n + 1]) setTimeout(function () { loadUnit(u.n + 1).catch(function () {}); }, 2500);
-    if (state.lang === "en") mode = "read";
+    if (state.lang === "en" && !ch.blog) mode = "read";
     if (mode === "share") return renderShare(view, chId, ch);
     if (mode === "teach") return renderTeach(view, chId, ch, sub || "12");
     if (mode === "lead") return renderLead(view, chId, ch);
@@ -1658,7 +1659,7 @@ var UI_ZS = {
     // 討論
     if (ch.discussion && ch.discussion.length) {
       html += '<div class="card"><h3>💬 ' + esc(t().discussion) + '</h3>' + ch.discussion.map(function (q, i) { return '<p class="q" style="margin:0 0 8px">' + (i + 1) + '. ' + esc(q) + '</p>'; }).join("");
-      html += (state.lang === "en" ? '' : '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ ' + esc(t().toolPrompter) + '</a>') + '</div>';
+      html += ((state.lang === "en" && !ch.brief12) ? '' : '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ ' + esc(t().toolPrompter) + '</a>') + '</div>';
     }
     var isDone = !!state.user.completedChapters[chId];
     html += '<button class="btn ' + (isDone ? "" : "primary") + ' block" id="markDoneBtn">' + (isDone ? "✓ " + esc(t().doneLabel) : esc(t().markDone)) + '</button>';
@@ -1718,7 +1719,7 @@ var UI_ZS = {
     html += '<p>' + (B.tags || []).map(function (x) { return '<span class="pill" style="margin-right:4px">#' + esc(x) + '</span>'; }).join("") + '</p></div>';
     html += prevNext(chId);
     view.innerHTML = html; window.scrollTo(0, 0);
-    var txt = B.title + "\n\n" + B.blocks.map(function (b) { return b.x; }).join("\n\n") + "\n\n" + (B.tags || []).map(function (x) { return "#" + x; }).join(" ") + "\n\n— 落實321 " + ch.numFull;
+    var txt = B.title + "\n\n" + B.blocks.map(function (b) { return b.x; }).join("\n\n") + "\n\n" + (B.tags || []).map(function (x) { return "#" + x.replace(/\s+/g, ""); }).join(" ") + "\n\n— " + (state.lang === "en" ? "Living Out 321 · " : L3("落實321 ", "")) + ch.numFull;
     qs("#copyBlog", view).addEventListener("click", function () { copyText(txt, this); bumpShare(chId); });
     var sb = qs("#shareBlog", view);
     if (sb) sb.addEventListener("click", function () { navigator.share({ title: B.title, text: txt }).then(function () { bumpShare(chId); }).catch(function () {}); });
@@ -1740,9 +1741,9 @@ var UI_ZS = {
     html += prevNext(chId);
     view.innerHTML = html; window.scrollTo(0, 0);
     qs("#exportSlides", view).addEventListener("click", function () {
-      var txt = ch.numFull + "　" + ch.title + "（" + len + "張投影片）\n\n" + S.map(function (s, i) {
+      var txt = ch.numFull + L3("　", " — ") + ch.title + L3("（" + len + "張投影片）", " (" + len + " slides)") + "\n\n" + S.map(function (s, i) {
         var br = Br[i] || { notes: [] };
-        return "【投影片" + s.n + "】" + s.title + "\n" + s.lines.join("\n") + (br.notes && br.notes.length ? "\n講解重點：\n" + br.notes.map(function (n, k) { return (k + 1) + ". " + n; }).join("\n") : "");
+        return L3("【投影片" + s.n + "】", "[Slide " + s.n + "] ") + s.title + "\n" + s.lines.join("\n") + (br.notes && br.notes.length ? L3("\n講解重點：\n", "\nSpeaker notes:\n") + br.notes.map(function (n, k) { return (k + 1) + ". " + n; }).join("\n") : "");
       }).join("\n\n");
       copyText(txt, this); bumpShare(chId);
     });
@@ -1751,7 +1752,7 @@ var UI_ZS = {
   function renderLead(view, chId, ch) {
     var html = chapterHead(ch, chId, "lead");
     html += '<div class="card"><p class="muted">' + esc(t().modeLeadDesc) + L3('。全螢幕深色介面、螢幕保持喚醒、分段計時。', '. Full-screen dark view, screen kept awake, timed stages.') + '</p>';
-    html += '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ 12張版（約15分鐘）</a><a class="btn block" style="margin-top:8px" href="#/tools/prompter/' + chId + '/21">▶ 21張版（約30分鐘）</a></div>';
+    html += '<a class="btn primary block" href="#/tools/prompter/' + chId + '/12">▶ ' + L3('12張版（約15分鐘）', '12 slides (about 15 min)') + '</a><a class="btn block" style="margin-top:8px" href="#/tools/prompter/' + chId + '/21">▶ ' + L3('21張版（約30分鐘）', '21 slides (about 30 min)') + '</a></div>';
     html += '<div class="card"><h3>💬 ' + esc(t().discussion) + '</h3>' + (ch.discussion || []).map(function (q, i) { return '<p class="q" style="margin:0 0 8px">' + (i + 1) + '. ' + esc(q) + '</p>'; }).join("") + '</div>';
     html += '<div class="card"><h3>✅ ' + esc(t().practices) + '</h3><ol style="margin:0;padding-left:20px">' + (ch.practices || []).map(function (p) { return '<li>' + esc(p) + '</li>'; }).join("") + '</ol></div>';
     html += '<a class="btn block" href="#/tools/checklist/' + chId + '">✔ ' + esc(t().toolChecklist) + '</a>';
@@ -1764,10 +1765,10 @@ var UI_ZS = {
   // ---------------------------------------------------------------
   function renderToolsList(view) {
     var html = '<h2 style="margin-top:4px">' + esc(t().tools) + '</h2><div class="toolgrid">';
-    [["journey", "🧭", t().toolJourney, t().toolJourneyDesc], ["920", "🍇", t().tool920, t().tool920Desc], ["tracks", "🔎", t().toolTracks, t().toolTracksDesc], ["checklist", "✅", t().toolChecklist, t().toolChecklistDesc], ["speaker", "🎤", t().toolSpeaker, t().toolSpeakerDesc]].filter(function (it) { return !(state.lang === "en" && it[0] === "speaker"); }).forEach(function (it) {
+    [["journey", "🧭", t().toolJourney, t().toolJourneyDesc], ["920", "🍇", t().tool920, t().tool920Desc], ["tracks", "🔎", t().toolTracks, t().toolTracksDesc], ["checklist", "✅", t().toolChecklist, t().toolChecklistDesc], ["speaker", "🎤", t().toolSpeaker, t().toolSpeakerDesc]].forEach(function (it) {
       html += '<a class="toolcard" href="#/tools/' + it[0] + '"><div class="ic">' + it[1] + '</div><h4>' + esc(it[2]) + '</h4><p>' + esc(it[3]) + '</p></a>';
     });
-    html += '</div>' + (state.lang === "en" ? '' : '<div class="section-title">' + esc(t().toolPrompter) + '</div><div class="card"><p class="muted">' + esc(t().toolPrompterDesc) + L3('。從任一課的「帶」模式進入，或先在「課程」選一課。', '') + '</p><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a></div>');
+    html += '</div>' + ('<div class="section-title">' + esc(t().toolPrompter) + '</div><div class="card"><p class="muted">' + esc(t().toolPrompterDesc) + L3('。從任一課的「帶」模式進入，或先在「課程」選一課。', '. Open it from the Lead mode of any lesson, or first pick a lesson under Course.') + '</p><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a></div>');
     view.innerHTML = html;
   }
   var JOURNEY_STEPS_ZH = [["資訊", "讀過本單元的課"], ["啟示", "讀過半數以上、有畫線"], ["信服", "存了宣告"], ["實踐", "勾了操練"], ["檢討", "做過教導誠信檢核"], ["修正", "同一課再次讀過"], ["反覆", "完成半數以上的課"], ["繁殖", "分享或匯出給別人"]];
@@ -1868,12 +1869,12 @@ var UI_ZS = {
     qsa("input[data-cl-id]", view).forEach(function (inp) { inp.addEventListener("change", function () { cl[inp.getAttribute("data-cl-id")] = inp.checked; saveUser(); }); });
   }
   function renderSpeaker(view, chId) {
-    var html = '<h2 style="margin-top:4px">' + esc(t().toolSpeaker) + '</h2><p class="muted">' + L3("每一課都有 12 張與 21 張兩種投影片、講解重點與口語逐字稿（約15／30分鐘）。選一課進入「講」模式，可一鍵匯出投影片文字到簡報軟體。", "") + '</p><div class="card" style="padding:8px 16px;">';
+    var html = '<h2 style="margin-top:4px">' + esc(t().toolSpeaker) + '</h2><p class="muted">' + L3("每一課都有 12 張與 21 張兩種投影片、講解重點與口語逐字稿（約15／30分鐘）。選一課進入「講」模式，可一鍵匯出投影片文字到簡報軟體。", "Every lesson has two slide sets — 12 and 21 slides — with speaker notes and a spoken script (about 15 / 30 minutes). Open a lesson in Teach mode to export the slide text to your presentation software in one tap.") + '</p><div class="card" style="padding:8px 16px;">';
     var hint = currentChapterHint();
     var ids = hint ? [hint] : [];
     chapterIds().forEach(function (c) { if (state.user.readChapters[c] && ids.indexOf(c) < 0) ids.push(c); });
     if (!ids.length) ids = chapterIds().slice(0, 5);
-    ids.slice(0, 12).forEach(function (c) { var m = lessonMeta(c); html += '<a class="rowlink" href="#/course/' + c + '/teach/12"><div class="meta"><div class="t">' + esc(m.no) + '　' + esc(m.title) + '</div><div class="s">' + L3("約 " + Math.round(m.chars / 250) + " 分鐘完整講章 · 12／21張投影片", "") + '</div></div><span class="chev">›</span></a>'; });
+    ids.slice(0, 12).forEach(function (c) { var m = lessonMeta(c); html += '<a class="rowlink" href="#/course/' + c + '/teach/12"><div class="meta"><div class="t">' + esc(m.no) + '　' + esc(m.title) + '</div><div class="s">' + L3("約 " + Math.round(m.chars / 250) + " 分鐘完整講章 · 12／21張投影片", "Full sermon · 12 / 21 slides") + '</div></div><span class="chev">›</span></a>'; });
     html += '</div><a class="btn block" href="#/course">' + esc(t().tabCourse) + ' ›</a>';
     view.innerHTML = html;
   }
@@ -1919,13 +1920,13 @@ var UI_ZS = {
     var PF_LABELS = ["A", "A+", "A++", "A+++"];
     var pf = parseInt(state.user.pfont, 10); if (!(pf >= 0 && pf <= 3)) pf = 1;
     el.className = "pf-" + pf;
-    var html = '<div class="ptop"><button id="pClose" aria-label="' + esc(t().promptClose) + '">✕</button><span>' + esc(ch.numFull + "　" + ch.title) + '</span><button id="pFont" aria-label="字級" title="字級">' + PF_LABELS[pf] + '</button><span class="ptimer" id="pTimer">00:00</span></div><div class="pdots">';
+    var html = '<div class="ptop"><button id="pClose" aria-label="' + esc(t().promptClose) + '">✕</button><span>' + esc(ch.numFull + "　" + ch.title) + '</span><button id="pFont" aria-label="' + L3("字級", "Text size") + '" title="' + L3("字級", "Text size") + '">' + PF_LABELS[pf] + '</button><span class="ptimer" id="pTimer">00:00</span></div><div class="pdots">';
     ps.items.forEach(function (it, i) { html += '<i class="' + (i < ps.idx ? "done" : (i === ps.idx ? "now" : "")) + '"></i>'; });
     html += '</div><div class="pbody"><div class="ptitle">' + esc(cur.phase) + ' · ' + esc(cur.title) + ' · ' + (ps.idx + 1) + ' / ' + total + '</div>';
     html += '<div class="pq">' + cur.lines.map(function (l) { return '<div style="margin-bottom:.4em">' + esc(l) + '</div>'; }).join("") + '</div>';
     if (cur.notes && cur.notes.length) html += '<details style="margin-top:14px;color:#C9B98A;font-size:14px"><summary style="cursor:pointer">' + esc(t().speakerNotes) + '</summary><ol style="padding-left:20px">' + cur.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ol></details>';
     html += '</div><div class="pctl"><button id="pPrev"' + (ps.idx === 0 ? " disabled" : "") + '>‹ ' + esc(t().prev) + '</button>';
-    if (cur.type === "q") html += '<button id="pDoneMust">' + (state.user.discussionDone[ps.chId] && state.user.discussionDone[ps.chId][cur.no] ? "✓ 已討論" : "○ 標記已討論") + '</button>';
+    if (cur.type === "q") html += '<button id="pDoneMust">' + (state.user.discussionDone[ps.chId] && state.user.discussionDone[ps.chId][cur.no] ? L3("✓ 已討論", "✓ Discussed") : L3("○ 標記已討論", "○ Mark as discussed")) + '</button>';
     html += '<button id="pNext">' + (ps.idx === total - 1 ? esc(t().exitPrompter) : esc(t().next) + ' ›') + '</button></div>';
     el.innerHTML = html;
     qs("#pClose", el).addEventListener("click", exitPrompter);
