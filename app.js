@@ -2085,7 +2085,7 @@ var UI_ZS = {
     view.innerHTML = html;
 
     var log = qs("#chatlog", view);
-    log.scrollTop = log.scrollHeight;
+    (function (l) { if (l) setTimeout(function () { try { l.scrollIntoView({ block: "end" }); } catch (e) { } }, 30); })(log.lastElementChild);
 
     // A long AI reply's "展開全部/收合" toggle only appears if the reply actually overflows
     // the collapsed height — measured against the real rendered content (tables/headers and
@@ -2236,7 +2236,7 @@ var UI_ZS = {
     chatSession.messages.push({ role: "user", text: text, id: newMsgId() });
     ta.value = "";
     renderCompanion(qs("#view"), chId);
-    var log = qs("#chatlog"); if (log) log.scrollTop = log.scrollHeight;
+    var log = qs("#chatlog"); if (log) (function (l) { if (l) setTimeout(function () { try { l.scrollIntoView({ block: "end" }); } catch (e) { } }, 30); })(log.lastElementChild);
 
     if (!navigator.onLine) {
       chatSession.messages.push({ role: "ai", text: t().companionNeedNet, id: newMsgId() });
