@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.3.0";
+  var VERSION = "1.3.1";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -1732,10 +1732,10 @@ var UI_ZS = {
     html += '<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn" id="exportSlides" style="flex:1">📋 ' + esc(t().exportSlides) + '</button><a class="btn primary" style="flex:1" href="#/tools/prompter/' + chId + '/' + len + '">▶ ' + esc(t().toolPrompter) + '</a></div>';
     S.forEach(function (s, i) {
       var br = Br[i] || { notes: [] }, sc = Sc[i] || { script: [] };
-      html += '<div class="card" style="padding:0;overflow:hidden"><div style="background:var(--accent);color:#fff;padding:8px 14px;font-weight:700;font-size:14px">' + s.n + '　' + esc(s.title) + '</div><div style="padding:12px 14px">';
-      html += s.lines.map(function (l) { return '<div style="font-size:16.5px;font-weight:600;line-height:1.6">' + esc(l) + '</div>'; }).join("");
-      if (br.notes && br.notes.length) html += '<details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700;font-size:13px;cursor:pointer">' + esc(t().speakerNotes) + '</summary><ol style="margin:6px 0 0;padding-left:20px;font-size:14px;color:var(--ink-soft)">' + br.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ol></details>';
-      if (sc.script && sc.script.length) html += '<details style="margin-top:6px"><summary style="color:var(--gold);font-weight:700;font-size:13px;cursor:pointer">' + esc(t().script) + '</summary><div style="font-size:14.5px;margin-top:6px">' + sc.script.map(function (p) { return '<p style="margin:0 0 8px">' + esc(p) + '</p>'; }).join("") + '</div></details>';
+      html += '<div class="card" style="padding:0;overflow:hidden"><div class="sl-head" style="background:var(--accent);color:#fff;padding:8px 14px;font-weight:700">' + s.n + '　' + esc(s.title) + '</div><div style="padding:12px 14px">';
+      html += s.lines.map(function (l) { return '<div class="sl-line" style="font-weight:600;line-height:1.6">' + esc(l) + '</div>'; }).join("");
+      if (br.notes && br.notes.length) html += '<details style="margin-top:8px"><summary class="sl-sum" style="color:var(--gold);font-weight:700;cursor:pointer">' + esc(t().speakerNotes) + '</summary><ol class="sl-notes" style="margin:6px 0 0;padding-left:20px;color:var(--ink-soft)">' + br.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ol></details>';
+      if (sc.script && sc.script.length) html += '<details style="margin-top:6px"><summary class="sl-sum" style="color:var(--gold);font-weight:700;cursor:pointer">' + esc(t().script) + '</summary><div class="sl-script" style="margin-top:6px">' + sc.script.map(function (p) { return '<p style="margin:0 0 8px">' + esc(p) + '</p>'; }).join("") + '</div></details>';
       html += '</div></div>';
     });
     html += prevNext(chId);
