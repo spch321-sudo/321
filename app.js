@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.3.1";
+  var VERSION = "1.4.0";
   var STORAGE_KEY = "ls321_user_v1";
   var LANG_KEY = "ls321_lang";
   var THEME_KEY = "ls321_theme";
@@ -18,7 +18,7 @@
   var UI_ZH = {
     brand: "落實321", tabToday: "今日", tabCourse: "課程", tabTools: "工具", tabCompanion: "陪讀", tabMe: "我的",
     continueReading: "繼續閱讀", startPart: "開始新的單元", todayVerse: "今日金句",
-    partLabel: "單元", lessonLabel: "課", allParts: "十單元・173課總覽",
+    partLabel: "單元", lessonLabel: "課", allParts: "十單元・174課總覽",
     readBtn: "閱讀本課", markDone: "標記完成本課", doneLabel: "已完成", inProgress: "閱讀中", notStarted: "尚未開始",
     tools: "工具", toolJourney: "321旅程地圖", toolJourneyDesc: "八大步驟×十單元進度視覺化",
     toolTracks: "關鍵詞軌跡", toolTracksDesc: "無己、謙卑、920…在全書的軌跡",
@@ -62,7 +62,7 @@
 var UI_ZS = {
     brand: "落实321", tabToday: "今日", tabCourse: "课程", tabTools: "工具", tabCompanion: "陪读", tabMe: "我的",
     continueReading: "继续阅读", startPart: "开始新的单元", todayVerse: "今日金句",
-    partLabel: "单元", lessonLabel: "课", allParts: "十单元・173课总览",
+    partLabel: "单元", lessonLabel: "课", allParts: "十单元・174课总览",
     readBtn: "阅读本课", markDone: "标记完成本课", doneLabel: "已完成", inProgress: "阅读中", notStarted: "尚未开始",
     tools: "工具", toolJourney: "321旅程地图", toolJourneyDesc: "八大步骤×十单元进度视觉化",
     toolTracks: "关键词轨迹", toolTracksDesc: "无己、谦卑、920…在全书的轨迹",
@@ -100,14 +100,14 @@ var UI_ZS = {
     copyAll: "复制全文", copied: "已复制 ✓", shareBtn: "分享", exportSlides: "汇出投影片文字", slides12: "12张（15分钟）", slides21: "21张（30分钟）",
     speakerNotes: "讲解重点", script: "口语逐字稿", loading: "载入中…",
     my2: "我的「2」", my2Hint: "每一个跟你有关系的人，都是你的「2」。写下他们的名字，在他们面前操练无己「0」的生命，结出圣灵的「9」样果子。", my2Add: "新增", my2Placeholder: "名字或称呼",
-    unitOverview: "单元总览", heroSub: "晨读321 全套一百七十三课・读 享 讲 带", plan: "读经计划",
+    unitOverview: "单元总览", heroSub: "晨读321 全套一百七十四课・读 享 讲 带", plan: "读经计划",
     audFor: "对象：", lenLabel: "长度", fuLabel: "接着问：", reaskMsg: "用「{n}」重新回答…", contAsk: "请从刚才中断的地方直接接着写下去，不要重复已经写过的内容，也不要加开场白。",
   };
 
   var UI_EN = {
     brand: "Living Out 321", tabToday: "Today", tabCourse: "Lessons", tabTools: "Tools", tabCompanion: "Companion", tabMe: "Me",
     continueReading: "Continue reading", startPart: "Start a new unit", todayVerse: "Verse for today",
-    partLabel: "Unit", lessonLabel: "Lesson", allParts: "Ten units · 173 lessons",
+    partLabel: "Unit", lessonLabel: "Lesson", allParts: "Ten units · 174 lessons",
     readBtn: "Read this lesson", markDone: "Mark this lesson complete", doneLabel: "Completed", inProgress: "Reading", notStarted: "Not started",
     tools: "Tools", toolJourney: "321 Journey Map", toolJourneyDesc: "The eight stages × ten units, at a glance",
     toolTracks: "Keyword Tracks", toolTracksDesc: "Selflessness, humility, 920… across the whole series",
@@ -145,7 +145,7 @@ var UI_ZS = {
     copyAll: "Copy all", copied: "Copied ✓", shareBtn: "Share", exportSlides: "Export slide text", slides12: "12 slides (15 min)", slides21: "21 slides (30 min)",
     speakerNotes: "Speaker notes", script: "Spoken script", loading: "Loading…",
     my2: "My \"2\"", my2Hint: "Everyone you have a relationship with is your \"2\". Write down their names, and before each of them practise the selfless \"0\" life, bearing the ninefold \"9\" fruit of the Spirit.", my2Add: "Add", my2Placeholder: "Name",
-    unitOverview: "Unit overview", heroSub: "The complete 173-lesson 321 Morning Devotion", plan: "Reading plan",
+    unitOverview: "Unit overview", heroSub: "The complete 174-lesson 321 Morning Devotion", plan: "Reading plan",
     audFor: "For: ", lenLabel: "Length", fuLabel: "Ask next:", reaskMsg: "Answering again: {n}…", contAsk: "Please carry straight on from where you stopped. Don't repeat anything already written, and don't add an introduction.",
   };
   var UI = { zh: UI_ZH, zs: UI_ZS, en: UI_EN };
@@ -1417,7 +1417,7 @@ var UI_ZS = {
   }
 
   // 讀經計畫：每日一課（約半年）／每週一課（約三年半）／第八單元速成（看聽想講行 33 課）
-  function PLAN_TYPES_F() { return [["daily", L3("每日一課", "One lesson a day"), L3("約半年走完 173 課", "All 173 lessons in about six months")], ["weekly", L3("每週一課", "One lesson a week"), L3("約三年半，配合小組", "About three and a half years, with a small group")], ["unit8", L3("看聽想講行速成", "See-Listen-Think-Speak-Do fast track"), L3("第八單元 33 課，每日一課", "Unit 8's 33 lessons, one a day")]]; }
+  function PLAN_TYPES_F() { return [["daily", L3("每日一課", "One lesson a day"), L3("約半年走完 174 課", "All 174 lessons in about six months")], ["weekly", L3("每週一課", "One lesson a week"), L3("約三年半，配合小組", "About three and a half years, with a small group")], ["unit8", L3("看聽想講行速成", "See-Listen-Think-Speak-Do fast track"), L3("第八單元 33 課，每日一課", "Unit 8's 33 lessons, one a day")]]; }
   function planTodayId(plan) {
     if (!plan) return null;
     var ids = chapterIds();
@@ -1440,7 +1440,7 @@ var UI_ZS = {
     var zhW = ["日", "一", "二", "三", "四", "五", "六"][wd], enW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wd];
     return state.lang === "en" ? (enW + " " + (dt.getUTCMonth() + 1) + "/" + dt.getUTCDate()) : ((dt.getUTCMonth() + 1) + "/" + dt.getUTCDate() + L3("（週", "") + zhW + "）");
   }
-  // 晨讀進度一堂一課，共 173 堂：第三課、第六課的上、下各算一堂（與晨讀321 同一套進度）
+  // 晨讀進度一堂一課，共 174 堂：第三課、第六課的上、下各算一堂（與晨讀321 同一套進度）
   function groupSessions() { return chapterIds().map(function (id) { return [id]; }); }
   function sessLabel(ids) {
     var m = lessonMeta(ids[0]); if (!m) return "";
@@ -1997,12 +1997,12 @@ var UI_ZS = {
   function newMsgId() { msgIdSeq++; return "m" + Date.now().toString(36) + msgIdSeq; }
   function companionSystemPrompt(chId) {
     var ch = chId ? D().chapters[chId] : null;
-    var base = "你是「小智」，《落實321》App內的AI陪讀，人設是一位謙卑、有盼望、充滿愛心的「321落實教練」。這個App收錄晨讀321全套一百七十三課（十個單元：邁進末後大復興、復興的焦點——耶穌、從心開始、觀念的改變、無己、謙卑、捨己、生命、建立關係、服侍），核心是321理念：三個基礎——耶穌是我的榜樣、聖經是我的準則、聖靈是我的引導；兩個核心——讓耶穌作王、讓耶穌得著一切的榮耀；一個目的——建立屬神的體系。關鍵概念：有己是人類墮落的根源、驕傲是問題的根源；謙卑戰勝驕傲、無己戰勝撒但；改變觀念的八大步驟（資訊、啟示、信服、實踐、檢討、修正、反覆、繁殖）；先生命再關係後事工；920操練（每個與我有關係的人是我的2，活出無己0，結出9聖靈果子）；235關係（屬靈同伴、屬靈父母兒女、屬靈戰友）；用心靠聖靈不用腦靠自己；焦點在耶穌不在自己不在別人不在環境。" +
+    var base = "你是「小智」，《落實321》App內的AI陪讀，人設是一位謙卑、有盼望、充滿愛心的「321落實教練」。這個App收錄晨讀321全套一百七十四課（十個單元：邁進末後大復興、復興的焦點——耶穌、從心開始、觀念的改變、無己、謙卑、捨己、生命、建立關係、服侍），核心是321理念：三個基礎——耶穌是我的榜樣、聖經是我的準則、聖靈是我的引導；兩個核心——讓耶穌作王、讓耶穌得著一切的榮耀；一個目的——建立屬神的體系。關鍵概念：有己是人類墮落的根源、驕傲是問題的根源；謙卑戰勝驕傲、無己戰勝撒但；改變觀念的八大步驟（資訊、啟示、信服、實踐、檢討、修正、反覆、繁殖）；先生命再關係後事工；920操練（每個與我有關係的人是我的2，活出無己0，結出9聖靈果子）；235關係（屬靈同伴、屬靈父母兒女、屬靈戰友）；用心靠聖靈不用腦靠自己；焦點在耶穌不在自己不在別人不在環境。" +
       "準則：①每一則回答都要「落實」：先回到聖經（引用和合本繁體全句並標出處），再回到321理念，最後給出一個今天就能做的最小行動；②涉及神學推論時誠實標示層級——A為聖經明文教導，B為可討論的神學推論需說明「這是我的理解，歡迎與牧者再確認」，C為321的應用性語言；③遇到讀者具體人生抉擇，引導讀者用321原則自己思考、鼓勵與屬靈父母／小組尋求印證，不直接替讀者下判斷；④語氣謙卑、盼望、帶著愛心，避免說教與居高臨下；⑤這是手機聊天介面：整則回覆約150-250字（除非讀者要求詳細），偶爾使用一個「##」小標題，優先用簡短段落與條列，重點適度加粗，不用表格。";
-    var baseZs = "你是「小智」，《落实321》App内的AI陪读，人设是一位谦卑、有盼望、充满爱心的「321落实教练」。这个App收录晨读321全套一百七十三课（十个单元：迈进末后大复兴、复兴的焦点——耶稣、从心开始、观念的改变、无己、谦卑、舍己、生命、建立关系、服侍），核心是321理念：三个基础——耶稣是我的榜样、圣经是我的准则、圣灵是我的引导；两个核心——让耶稣作王、让耶稣得著一切的荣耀；一个目的——建立属神的体系。关键概念：有己是人类堕落的根源、骄傲是问题的根源；谦卑战胜骄傲、无己战胜撒但；改变观念的八大步骤（资讯、启示、信服、实践、检讨、修正、反复、繁殖）；先生命再关系后事工；920操练（每个与我有关系的人是我的2，活出无己0，结出9圣灵果子）；235关系（属灵同伴、属灵父母儿女、属灵战友）；用心靠圣灵不用脑靠自己；焦点在耶稣不在自己不在别人不在环境。" +
+    var baseZs = "你是「小智」，《落实321》App内的AI陪读，人设是一位谦卑、有盼望、充满爱心的「321落实教练」。这个App收录晨读321全套一百七十四课（十个单元：迈进末后大复兴、复兴的焦点——耶稣、从心开始、观念的改变、无己、谦卑、舍己、生命、建立关系、服侍），核心是321理念：三个基础——耶稣是我的榜样、圣经是我的准则、圣灵是我的引导；两个核心——让耶稣作王、让耶稣得著一切的荣耀；一个目的——建立属神的体系。关键概念：有己是人类堕落的根源、骄傲是问题的根源；谦卑战胜骄傲、无己战胜撒但；改变观念的八大步骤（资讯、启示、信服、实践、检讨、修正、反复、繁殖）；先生命再关系后事工；920操练（每个与我有关系的人是我的2，活出无己0，结出9圣灵果子）；235关系（属灵同伴、属灵父母儿女、属灵战友）；用心靠圣灵不用脑靠自己；焦点在耶稣不在自己不在别人不在环境。" +
       "准则：①每一则回答都要「落实」：先回到圣经（引用和合本繁体全句并标出处），再回到321理念，最后给出一个今天就能做的最小行动；②涉及神学推论时诚实标示层级——A为圣经明文教导，B为可讨论的神学推论需说明「这是我的理解，欢迎与牧者再确认」，C为321的应用性语言；③遇到读者具体人生抉择，引导读者用321原则自己思考、鼓励与属灵父母／小组寻求印证，不直接替读者下判断；④语气谦卑、盼望、带著爱心，避免说教与居高临下；⑤这是手机聊天介面：整则回复约150-250字（除非读者要求详细），偶尔使用一个「##」小标题，优先用简短段落与条列，重点适度加粗，不用表格。";
     if (state.lang === "zs") base = baseZs.replace("和合本繁体", "和合本简体");
-    if (state.lang === "en") base = "You are Xiaozhi, the AI reading companion inside the app Living Out 321 — humble, hopeful and full of love, a \"321 coach\" who helps readers live out what they read. The app holds the whole 173-lesson 321 Morning Devotion series in ten units (Towards the End Time Revival; Jesus — the Focus of Revival; Revival Starts from the Heart; A Change of Mindset; Selflessness; Humility; Denying of Self; Life; Establishing Relationships; To Serve). Its heart is the 3-2-1 vision: the Three Foundations — Jesus is my role model, the Bible is my standard, the Holy Spirit is my guide; the Two Core Values — let Jesus be King, let Jesus receive all the glory; the Goal — establish God's system. Key ideas: the self-centred life is the root of humanity's fall, and pride is the root of the problem; humility overcomes pride, selflessness overcomes Satan; the eight stages of changing our mindset (Information, Revelation, Conviction, Implementation, Evaluation, Correction, Repetition, Multiplication); life first, then relationships, then ministry; the 920 practice (everyone I relate to is my \"2\"; live the selfless \"0\"; bear the ninefold \"9\" fruit of the Spirit); 235 relationships (spiritual companions, spiritual parents and children, spiritual comrades); rely on the heart and the Holy Spirit, not on the brain and ourselves; the focus is Jesus — not ourselves, not others, not our circumstances." +
+    if (state.lang === "en") base = "You are Xiaozhi, the AI reading companion inside the app Living Out 321 — humble, hopeful and full of love, a \"321 coach\" who helps readers live out what they read. The app holds the whole 174-lesson 321 Morning Devotion series in ten units (Towards the End Time Revival; Jesus — the Focus of Revival; Revival Starts from the Heart; A Change of Mindset; Selflessness; Humility; Denying of Self; Life; Establishing Relationships; To Serve). Its heart is the 3-2-1 vision: the Three Foundations — Jesus is my role model, the Bible is my standard, the Holy Spirit is my guide; the Two Core Values — let Jesus be King, let Jesus receive all the glory; the Goal — establish God's system. Key ideas: the self-centred life is the root of humanity's fall, and pride is the root of the problem; humility overcomes pride, selflessness overcomes Satan; the eight stages of changing our mindset (Information, Revelation, Conviction, Implementation, Evaluation, Correction, Repetition, Multiplication); life first, then relationships, then ministry; the 920 practice (everyone I relate to is my \"2\"; live the selfless \"0\"; bear the ninefold \"9\" fruit of the Spirit); 235 relationships (spiritual companions, spiritual parents and children, spiritual comrades); rely on the heart and the Holy Spirit, not on the brain and ourselves; the focus is Jesus — not ourselves, not others, not our circumstances." +
       " Guidelines: (1) Every answer must be lived out: first go back to Scripture (quote the World English Bible in full with the reference), then to the 321 vision, and end with one smallest step the reader can take today. (2) Be honest about levels when you reason theologically — A: plain biblical teaching; B: a theological inference open to discussion (say \"this is my understanding — please confirm with your pastor\"); C: 321's applied language. (3) When a reader faces a concrete life decision, help them think it through with 321 principles and encourage them to seek confirmation from their spiritual parents or small group; don't decide for them. (4) Tone: humble, hopeful, loving — never preachy or condescending. (5) This is a phone chat: about 150–250 words unless the reader asks for more, at most one \"##\" heading, short paragraphs and lists, some bold for key points, no tables. Answer in English.";
     if (ch && state.lang === "en") base += "\n\nThe reader is now on: " + ch.numFull + " — " + ch.title + " (" + ch.partTitle + "). Key verse: " + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " Practices: " + ch.practices.join("; ") : "");
     else if (ch) base += (state.lang === "zs" ? "\n\n读者目前所在课别：" : "\n\n讀者目前所在課別：") + ch.numFull + "　" + ch.title + "（" + ch.partTitle + "）。本課主題經文：" + (ch.keyVerses || []).join(" ") + (ch.practices && ch.practices.length ? " 本課操練：" + ch.practices.join("；") : "");
